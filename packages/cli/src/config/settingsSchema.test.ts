@@ -332,7 +332,7 @@ describe('SettingsSchema', () => {
       ).toBe('General');
       expect(
         getSettingsSchema().general.properties.previewFeatures.default,
-      ).toBe(false);
+      ).toBe(true);
       expect(
         getSettingsSchema().general.properties.previewFeatures.requiresRestart,
       ).toBe(false);
@@ -349,7 +349,7 @@ describe('SettingsSchema', () => {
       expect(setting).toBeDefined();
       expect(setting.type).toBe('boolean');
       expect(setting.category).toBe('Experimental');
-      expect(setting.default).toBe(false);
+      expect(setting.default).toBe(true);
       expect(setting.requiresRestart).toBe(true);
       expect(setting.showInDialog).toBe(false);
       expect(setting.description).toBe(

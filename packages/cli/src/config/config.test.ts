@@ -682,7 +682,7 @@ describe('Hierarchical Memory Loading (config.ts) - Placeholder Suite', () => {
     expect(ServerConfig.loadServerHierarchicalMemory).toHaveBeenCalledWith(
       expect.any(String),
       [],
-      false,
+      true,
       expect.any(Object),
       expect.any(ExtensionManager),
       true,

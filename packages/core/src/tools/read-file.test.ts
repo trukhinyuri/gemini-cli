@@ -251,36 +251,31 @@ describe('ReadFileTool', () => {
       });
     });
 
-    it('should return error for a file that is too large', async () => {
+    it('should return success for a file that is large (limit removed)', async () => {
       const filePath = path.join(tempRootDir, 'largefile.txt');
-      // 21MB of content exceeds 20MB limit
+      // 21MB of content - previously exceeded 20MB limit
       const largeContent = 'x'.repeat(21 * 1024 * 1024);
       await fsp.writeFile(filePath, largeContent, 'utf-8');
       const params: ReadFileToolParams = { file_path: filePath };
       const invocation = tool.build(params);
 
       const result = await invocation.execute(abortSignal);
-      expect(result).toHaveProperty('error');
-      expect(result.error?.type).toBe(ToolErrorType.FILE_TOO_LARGE);
-      expect(result.error?.message).toContain(
-        'File size exceeds the 20MB limit',
-      );
+      // Expect success instead of error
+      expect(result).not.toHaveProperty('error');
+      expect(result.llmContent).toBe(largeContent);
     });
 
-    it('should handle text file with lines exceeding maximum length', async () => {
+    it('should handle text file with long lines without truncation', async () => {
       const filePath = path.join(tempRootDir, 'longlines.txt');
-      const longLine = 'a'.repeat(2500); // Exceeds MAX_LINE_LENGTH_TEXT_FILE (2000)
+      const longLine = 'a'.repeat(2500); // Exceeds OLD MAX_LINE_LENGTH_TEXT_FILE (2000)
       const fileContent = `Short line\n${longLine}\nAnother short line`;
       await fsp.writeFile(filePath, fileContent, 'utf-8');
       const params: ReadFileToolParams = { file_path: filePath };
       const invocation = tool.build(params);
 
       const result = await invocation.execute(abortSignal);
-      expect(result.llmContent).toContain(
-        'IMPORTANT: The file content has been truncated',
-      );
-      expect(result.llmContent).toContain('--- FILE CONTENT (truncated) ---');
-      expect(result.returnDisplay).toContain('some lines were shortened');
+      expect(result.llmContent).toBe(fileContent);
+      expect(result.returnDisplay).toBe('');
     });
 
     it('should handle image file and return appropriate content', async () => {

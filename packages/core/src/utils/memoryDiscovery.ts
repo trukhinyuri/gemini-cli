@@ -481,7 +481,7 @@ export async function loadServerHierarchicalMemory(
   folderTrust: boolean,
   importFormat: 'flat' | 'tree' = 'tree',
   fileFilteringOptions?: FileFilteringOptions,
-  maxDirs: number = 200,
+  maxDirs: number = 1000000,
 ): Promise<LoadServerHierarchicalMemoryResponse> {
   // FIX: Use real, canonical paths for a reliable comparison to handle symlinks.
   const realCwd = await fs.realpath(path.resolve(currentWorkingDirectory));

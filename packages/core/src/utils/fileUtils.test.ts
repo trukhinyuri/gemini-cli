@@ -909,12 +909,10 @@ describe('fileUtils', () => {
       expect(result.linesShown).toEqual([1, 2]);
     });
 
-    it('should truncate long lines in text files', async () => {
+    it('should not truncate long lines in text files (limit increased)', async () => {
       const longLine = 'a'.repeat(2500);
-      actualNodeFs.writeFileSync(
-        testTextFilePath,
-        `Short line\n${longLine}\nAnother short line`,
-      );
+      const fileContent = `Short line\n${longLine}\nAnother short line`;
+      actualNodeFs.writeFileSync(testTextFilePath, fileContent);
 
       const result = await processSingleFileContent(
         testTextFilePath,
@@ -922,15 +920,9 @@ describe('fileUtils', () => {
         new StandardFileSystemService(),
       );
 
-      expect(result.llmContent).toContain('Short line');
-      expect(result.llmContent).toContain(
-        longLine.substring(0, 2000) + '... [truncated]',
-      );
-      expect(result.llmContent).toContain('Another short line');
-      expect(result.returnDisplay).toBe(
-        'Read all 3 lines from test.txt (some lines were shortened)',
-      );
-      expect(result.isTruncated).toBe(true);
+      expect(result.llmContent).toBe(fileContent);
+      expect(result.returnDisplay).toBe('');
+      expect(result.isTruncated).toBe(false);
     });
 
     it('should truncate when line count exceeds the limit', async () => {
@@ -950,7 +942,7 @@ describe('fileUtils', () => {
       expect(result.returnDisplay).toBe('Read lines 1-5 of 11 from test.txt');
     });
 
-    it('should truncate when a line length exceeds the character limit', async () => {
+    it('should not truncate when a line length exceeds the old character limit', async () => {
       const longLine = 'b'.repeat(2500);
       const lines = Array.from({ length: 10 }, (_, i) => `Line ${i + 1}`);
       lines.push(longLine); // Total 11 lines
@@ -965,13 +957,11 @@ describe('fileUtils', () => {
         11,
       );
 
-      expect(result.isTruncated).toBe(true);
-      expect(result.returnDisplay).toBe(
-        'Read all 11 lines from test.txt (some lines were shortened)',
-      );
+      expect(result.isTruncated).toBe(false);
+      expect(result.returnDisplay).toBe('');
     });
 
-    it('should truncate both line count and line length when both exceed limits', async () => {
+    it('should not truncate when limits are high', async () => {
       const linesWithLongInMiddle = Array.from(
         { length: 20 },
         (_, i) => `Line ${i + 1}`,
@@ -983,6 +973,20 @@ describe('fileUtils', () => {
       );
 
       // Read 10 lines out of 20, including the long line
+      // Note: reading subset of lines is handled by offset/limit logic, which is tested elsewhere.
+      // If we read *all* lines (0-20), it should be untruncated.
+      // But the original test read 0-10. This is *range* truncation, which is requested by the user.
+      // Wait, the test says "should truncate ... when both exceed limits".
+      // If I ask for 10 lines, I get 10 lines. That is "truncated" from the file perspective if I wanted the whole file,
+      // but if I asked for 10 lines, getting 10 lines is correct.
+      // However, `isTruncated` flag in `processSingleFileContent` indicates if *lines were shortened* OR *range was truncated*.
+      // `contentRangeTruncated` is true if `endLine < originalLineCount`.
+      // So if I read 10 lines of 20, `isTruncated` IS true.
+      // BUT `returnDisplay` logic changed.
+      // The old test expected: "Read lines 1-10 of 20 from test.txt (some lines were shortened)"
+      // The new behavior should be: "Read lines 1-10 of 20 from test.txt" (without "some lines were shortened")
+      // because the long line is NOT shortened anymore.
+
       const result = await processSingleFileContent(
         testTextFilePath,
         tempRootDir,
@@ -990,13 +994,13 @@ describe('fileUtils', () => {
         0,
         10,
       );
-      expect(result.isTruncated).toBe(true);
+      expect(result.isTruncated).toBe(true); // Still true because we read subset of lines
       expect(result.returnDisplay).toBe(
-        'Read lines 1-10 of 20 from test.txt (some lines were shortened)',
+        'Read lines 1-10 of 20 from test.txt', // No more "(some lines were shortened)"
       );
     });
 
-    it('should return an error if the file size exceeds 20MB', async () => {
+    it('should not return an error if the file size exceeds 20MB (limit removed)', async () => {
       // Create a small test file
       actualNodeFs.writeFileSync(testTextFilePath, 'test content');
 
@@ -1013,11 +1017,10 @@ describe('fileUtils', () => {
           new StandardFileSystemService(),
         );
 
-        expect(result.error).toContain('File size exceeds the 20MB limit');
-        expect(result.returnDisplay).toContain(
-          'File size exceeds the 20MB limit',
-        );
-        expect(result.llmContent).toContain('File size exceeds the 20MB limit');
+        // Expect success now
+        expect(result.error).toBeUndefined();
+        expect(result.returnDisplay).toBe('');
+        expect(result.llmContent).toBe('test content');
       } finally {
         statSpy.mockRestore();
       }

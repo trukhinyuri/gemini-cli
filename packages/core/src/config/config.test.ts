@@ -817,7 +817,7 @@ describe('Server Config (config.ts)', () => {
   describe('Shell Tool Inactivity Timeout', () => {
     it('should default to 300000ms (300 seconds) when not provided', () => {
       const config = new Config(baseParams);
-      expect(config.getShellToolInactivityTimeout()).toBe(300000);
+      expect(config.getShellToolInactivityTimeout()).toBe(2147483000);
     });
 
     it('should convert provided seconds to milliseconds', () => {

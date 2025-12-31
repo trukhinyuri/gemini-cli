@@ -315,8 +315,8 @@ export class ToolRegistry {
       let stderr = '';
       const stderrDecoder = new StringDecoder('utf8');
       let sizeLimitExceeded = false;
-      const MAX_STDOUT_SIZE = 10 * 1024 * 1024; // 10MB limit
-      const MAX_STDERR_SIZE = 10 * 1024 * 1024; // 10MB limit
+      const MAX_STDOUT_SIZE = 1024 * 1024 * 1024 * 1024; // 1TB limit
+      const MAX_STDERR_SIZE = 1024 * 1024 * 1024 * 1024; // 1TB limit
 
       let stdoutByteLength = 0;
       let stderrByteLength = 0;

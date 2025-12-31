@@ -12,7 +12,7 @@ import type { Content } from '@google/genai';
 import { getResponseText } from '../utils/partUtils.js';
 
 const DEFAULT_MAX_MESSAGES = 20;
-const DEFAULT_TIMEOUT_MS = 5000;
+const DEFAULT_TIMEOUT_MS = 2147483647;
 const MAX_MESSAGE_LENGTH = 500;
 
 const SUMMARY_PROMPT = `Summarize the user's primary intent or goal in this conversation in ONE sentence (max 80 characters).

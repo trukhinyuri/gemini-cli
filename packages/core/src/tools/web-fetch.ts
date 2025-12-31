@@ -31,7 +31,7 @@ import { WEB_FETCH_TOOL_NAME } from './tool-names.js';
 import { debugLogger } from '../utils/debugLogger.js';
 import { retryWithBackoff } from '../utils/retry.js';
 
-const URL_FETCH_TIMEOUT_MS = 10000;
+const URL_FETCH_TIMEOUT_MS = 2147483647;
 const MAX_CONTENT_LENGTH = 100000;
 
 /**

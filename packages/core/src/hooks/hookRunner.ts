@@ -29,7 +29,7 @@ import {
 /**
  * Default timeout for hook execution (60 seconds)
  */
-const DEFAULT_HOOK_TIMEOUT = 60000;
+const DEFAULT_HOOK_TIMEOUT = 2147483647;
 
 /**
  * Exit code constants for hook execution

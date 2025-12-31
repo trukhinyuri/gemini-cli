@@ -88,7 +88,7 @@ describe('CheckerRunner', () => {
     vi.useFakeTimers();
     const mockChecker = {
       check: vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 6000)); // Longer than default 5s timeout
+        await new Promise((resolve) => setTimeout(resolve, 2147483800)); // Longer than default timeout
         return { decision: SafetyCheckDecision.ALLOW };
       }),
     };
@@ -98,7 +98,7 @@ describe('CheckerRunner', () => {
     });
 
     const runPromise = runner.runChecker(mockToolCall, mockInProcessConfig);
-    vi.advanceTimersByTime(5001);
+    vi.advanceTimersByTime(2147483700);
 
     const result = await runPromise;
     expect(result.decision).toBe(SafetyCheckDecision.DENY);
@@ -223,7 +223,7 @@ describe('CheckerRunner', () => {
       vi.mocked(spawn).mockReturnValue(mockChildProcess as any);
 
       const runPromise = runner.runChecker(mockToolCall, mockExternalConfig);
-      vi.advanceTimersByTime(5001);
+      vi.advanceTimersByTime(2147483700);
 
       const result = await runPromise;
       expect(result.decision).toBe(SafetyCheckDecision.DENY);
@@ -255,7 +255,7 @@ describe('CheckerRunner', () => {
       const runPromise = runner.runChecker(mockToolCall, mockExternalConfig);
 
       // Trigger main timeout
-      vi.advanceTimersByTime(5001);
+      vi.advanceTimersByTime(2147483700);
 
       // Should have sent SIGTERM
       expect(mockChildProcess.kill).toHaveBeenCalledWith('SIGTERM');

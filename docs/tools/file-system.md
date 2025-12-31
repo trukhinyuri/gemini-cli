@@ -47,9 +47,9 @@ Other binary file types are generally skipped.
   - `path` (string, required): The absolute path to the file to read.
   - `offset` (number, optional): For text files, the 0-based line number to
     start reading from. Requires `limit` to be set.
-  - `limit` (number, optional): For text files, the maximum number of lines to
-    read. If omitted, reads a default maximum (e.g., 2000 lines) or the entire
-    file if feasible.
+- `limit` (number, optional): For text files, the maximum number of lines to
+  read. Use with `offset` to paginate through large files. If omitted, reads the
+  entire file (up to a very large default limit of 1 billion lines).
 - **Behavior:**
   - For text files: Returns the content. If `offset` and `limit` are used,
     returns only that slice of lines. Indicates if content was truncated due to

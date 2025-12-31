@@ -58,13 +58,28 @@ enum TerminalKeys {
 }
 
 const createMockSettings = (
-  userSettings = {},
-  systemSettings = {},
-  workspaceSettings = {},
-) =>
-  new LoadedSettings(
+  userSettings: Record<string, unknown> = {},
+  systemSettings: Record<string, unknown> = {},
+  workspaceSettings: Record<string, unknown> = {},
+) => {
+  // Override defaults to match old snapshots where these were false
+  const defaultGeneralSettings = {
+    previewFeatures: false,
+    checkpointing: { enabled: false },
+    sessionRetention: { enabled: false },
+  };
+
+  const defaultExperimentalSettings = {
+    enableAgents: false,
+  };
+
+  return new LoadedSettings(
     {
-      settings: { ui: { customThemes: {} }, mcpServers: {}, ...systemSettings },
+      settings: {
+        ui: { customThemes: {} },
+        mcpServers: {},
+        ...systemSettings,
+      },
       originalSettings: {
         ui: { customThemes: {} },
         mcpServers: {},
@@ -73,7 +88,10 @@ const createMockSettings = (
       path: '/system/settings.json',
     },
     {
-      settings: {},
+      settings: {
+        general: defaultGeneralSettings,
+        experimental: defaultExperimentalSettings,
+      },
       originalSettings: {},
       path: '/system/system-defaults.json',
     },
@@ -106,6 +124,7 @@ const createMockSettings = (
     true,
     new Set(),
   );
+};
 
 vi.mock('../../config/settingsSchema.js', async (importOriginal) => {
   const original =

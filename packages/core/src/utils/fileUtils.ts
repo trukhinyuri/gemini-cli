@@ -54,8 +54,8 @@ export async function loadWasmBinary(
 }
 
 // Constants for text file processing
-const DEFAULT_MAX_LINES_TEXT_FILE = 2000;
-const MAX_LINE_LENGTH_TEXT_FILE = 2000;
+const DEFAULT_MAX_LINES_TEXT_FILE = 1000000000;
+const MAX_LINE_LENGTH_TEXT_FILE = 1000000000;
 
 // Default values for encoding and separator format
 export const DEFAULT_ENCODING: BufferEncoding = 'utf-8';
@@ -381,11 +381,12 @@ export async function processSingleFileContent(
     }
 
     const fileSizeInMB = stats.size / (1024 * 1024);
-    if (fileSizeInMB > 20) {
+    if (fileSizeInMB > 999999999) {
+      // Effectively disabled
       return {
-        llmContent: 'File size exceeds the 20MB limit.',
-        returnDisplay: 'File size exceeds the 20MB limit.',
-        error: `File size exceeds the 20MB limit: ${filePath} (${fileSizeInMB.toFixed(2)}MB)`,
+        llmContent: 'File size exceeds the limit.',
+        returnDisplay: 'File size exceeds the limit.',
+        error: `File size exceeds the limit: ${filePath} (${fileSizeInMB.toFixed(2)}MB)`,
         errorType: ToolErrorType.FILE_TOO_LARGE,
       };
     }

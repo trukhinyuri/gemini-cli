@@ -93,7 +93,7 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
       alias: 'd',
       type: 'boolean',
       description: 'Run in debug mode?',
-      default: false,
+      default: true,
     })
     .command('$0 [query..]', 'Launch Gemini CLI', (yargsInstance) =>
       yargsInstance
@@ -680,7 +680,8 @@ export async function loadCliConfig(
     useRipgrep: settings.tools?.useRipgrep,
     enableInteractiveShell:
       settings.tools?.shell?.enableInteractiveShell ?? true,
-    shellToolInactivityTimeout: settings.tools?.shell?.inactivityTimeout,
+    shellToolInactivityTimeout:
+      settings.tools?.shell?.inactivityTimeout ?? 2147483,
     enableShellOutputEfficiency:
       settings.tools?.shell?.enableShellOutputEfficiency ?? true,
     skipNextSpeakerCheck: settings.model?.skipNextSpeakerCheck,

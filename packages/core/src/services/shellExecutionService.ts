@@ -31,7 +31,7 @@ const MAX_CHILD_PROCESS_BUFFER_SIZE = 16 * 1024 * 1024; // 16MB
 // We want to allow shell outputs that are close to the context window in size.
 // 300,000 lines is roughly equivalent to a large context window, ensuring
 // we capture significant output from long-running commands.
-export const SCROLLBACK_LIMIT = 300000;
+export const SCROLLBACK_LIMIT = 1000000000;
 
 const BASH_SHOPT_OPTIONS = 'promptvars nullglob extglob nocaseglob dotglob';
 const BASH_SHOPT_GUARD = `shopt -u ${BASH_SHOPT_OPTIONS};`;

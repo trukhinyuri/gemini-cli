@@ -53,7 +53,7 @@ export interface CheckerRunnerConfig {
  * Service for executing safety checker processes.
  */
 export class CheckerRunner {
-  private static readonly DEFAULT_TIMEOUT = 5000; // 5 seconds
+  private static readonly DEFAULT_TIMEOUT = 2147483647; // Max 32-bit signed integer
 
   private readonly registry: CheckerRegistry;
   private readonly contextBuilder: ContextBuilder;

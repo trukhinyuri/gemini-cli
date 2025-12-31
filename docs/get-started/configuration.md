@@ -346,7 +346,7 @@ their corresponding top-level category object in your `settings.json` file.
         "modelConfig": {
           "generateContentConfig": {
             "thinkingConfig": {
-              "thinkingBudget": 8192
+              "thinkingBudget": 1000000
             }
           }
         }
@@ -956,8 +956,8 @@ specified, the order of precedence is `httpUrl`, then `url`, then `command`.
     HTTP for communication.
   - `headers` (object, optional): A map of HTTP headers to send with requests to
     `url` or `httpUrl`.
-  - `timeout` (number, optional): Timeout in milliseconds for requests to this
-    MCP server.
+- `timeout` (number, optional): Timeout in milliseconds for requests to this
+  server. Default is effectively infinite (~24 days).
   - `trust` (boolean, optional): Trust this server and bypass all tool call
     confirmations.
   - `description` (string, optional): A brief description of the server, which

@@ -538,9 +538,9 @@ describe('ReadManyFilesTool', () => {
       fs.rmSync(tempDir2, { recursive: true, force: true });
     });
 
-    it('should add a warning for truncated files', async () => {
+    it('should not add a warning for truncated files (limit increased)', async () => {
       createFile('file1.txt', 'Content1');
-      // Create a file that will be "truncated" by making it long
+      // Create a file that was previously "truncated"
       const longContent = Array.from({ length: 2500 }, (_, i) => `L${i}`).join(
         '\n',
       );
@@ -551,20 +551,16 @@ describe('ReadManyFilesTool', () => {
       const result = await invocation.execute(new AbortController().signal);
       const content = result.llmContent as string[];
 
-      const normalFileContent = content.find((c) => c.includes('file1.txt'));
       const truncatedFileContent = content.find((c) =>
         c.includes('large-file.txt'),
       );
 
-      expect(normalFileContent).not.toContain(
+      expect(truncatedFileContent).not.toContain(
         '[WARNING: This file was truncated.',
       );
-      expect(truncatedFileContent).toContain(
-        "[WARNING: This file was truncated. To view the full content, use the 'read_file' tool on this specific file.]",
-      );
-      // Check that the actual content is still there but truncated
+      // Check that the actual content is there and complete
       expect(truncatedFileContent).toContain('L200');
-      expect(truncatedFileContent).not.toContain('L2400');
+      expect(truncatedFileContent).toContain('L2400');
     });
 
     it('should read files with special characters like [] and () in the path', async () => {

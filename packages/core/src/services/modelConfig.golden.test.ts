@@ -63,8 +63,10 @@ describe('ModelConfigService Golden Test', () => {
 
     const goldenData = JSON.parse(goldenContent);
 
+    const cleanResolvedAliases = JSON.parse(JSON.stringify(resolvedAliases));
+
     expect(
-      resolvedAliases,
+      cleanResolvedAliases,
       'Golden file mismatch. If the new resolved aliases are correct, run the test with `UPDATE_GOLDENS=true` to regenerate the golden file.',
     ).toEqual(goldenData);
   });
@@ -108,8 +110,10 @@ describe('ModelConfigService Golden Test', () => {
 
     const goldenData = JSON.parse(goldenContent);
 
+    const cleanResolvedAliases = JSON.parse(JSON.stringify(resolvedAliases));
+
     expect(
-      resolvedAliases,
+      cleanResolvedAliases,
       'Golden file mismatch. If the new resolved aliases are correct, run the test with `UPDATE_GOLDENS=true` to regenerate the golden file.',
     ).toEqual(goldenData);
   });

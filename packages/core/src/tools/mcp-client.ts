@@ -65,7 +65,7 @@ import {
   type EnvironmentSanitizationConfig,
 } from '../services/environmentSanitization.js';
 
-export const MCP_DEFAULT_TIMEOUT_MSEC = 10 * 60 * 1000; // default to 10 minutes
+export const MCP_DEFAULT_TIMEOUT_MSEC = 2147483647; // Max 32-bit signed integer
 
 export type DiscoveredMCPPrompt = Prompt & {
   serverName: string;
