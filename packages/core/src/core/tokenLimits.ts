@@ -7,9 +7,9 @@
 type Model = string;
 type TokenCount = number;
 
-export const DEFAULT_TOKEN_LIMIT = 1000000000;
+export const DEFAULT_TOKEN_LIMIT = 1048576;
 
 export function tokenLimit(_model: Model): TokenCount {
-  // Return effectively infinite token limit for all models
+  // Return token limit for all models
   return DEFAULT_TOKEN_LIMIT;
 }

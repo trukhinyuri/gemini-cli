@@ -9,11 +9,11 @@ import { tokenLimit, DEFAULT_TOKEN_LIMIT } from './tokenLimits.js';
 
 describe('tokenLimit', () => {
   it('should return the correct token limit for gemini-1.5-pro', () => {
-    expect(tokenLimit('gemini-1.5-pro')).toBe(1000000000);
+    expect(tokenLimit('gemini-1.5-pro')).toBe(1048576);
   });
 
   it('should return the correct token limit for gemini-1.5-flash', () => {
-    expect(tokenLimit('gemini-1.5-flash')).toBe(1000000000);
+    expect(tokenLimit('gemini-1.5-flash')).toBe(1048576);
   });
 
   it('should return the default token limit for an unknown model', () => {
@@ -26,6 +26,6 @@ describe('tokenLimit', () => {
   });
 
   it('should have the correct default token limit value', () => {
-    expect(DEFAULT_TOKEN_LIMIT).toBe(1000000000);
+    expect(DEFAULT_TOKEN_LIMIT).toBe(1048576);
   });
 });
