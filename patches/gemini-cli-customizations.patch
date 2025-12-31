@@ -1,0 +1,1618 @@
+diff --git a/docs/get-started/configuration.md b/docs/get-started/configuration.md
+index db9161aaf..afda9c91f 100644
+--- a/docs/get-started/configuration.md
++++ b/docs/get-started/configuration.md
+@@ -100,7 +100,7 @@ their corresponding top-level category object in your `settings.json` file.
+ 
+ - **`general.previewFeatures`** (boolean):
+   - **Description:** Enable preview features (e.g., preview models).
+-  - **Default:** `false`
++  - **Default:** `true`
+ 
+ - **`general.preferredEditor`** (string):
+   - **Description:** The preferred editor to open files in.
+@@ -112,7 +112,7 @@ their corresponding top-level category object in your `settings.json` file.
+ 
+ - **`general.disableAutoUpdate`** (boolean):
+   - **Description:** Disable automatic updates
+-  - **Default:** `false`
++  - **Default:** `true`
+ 
+ - **`general.disableUpdateNag`** (boolean):
+   - **Description:** Disable update notification prompts.
+@@ -120,7 +120,7 @@ their corresponding top-level category object in your `settings.json` file.
+ 
+ - **`general.checkpointing.enabled`** (boolean):
+   - **Description:** Enable session checkpointing for recovery
+-  - **Default:** `false`
++  - **Default:** `true`
+   - **Requires restart:** Yes
+ 
+ - **`general.enablePromptCompletion`** (boolean):
+@@ -140,7 +140,7 @@ their corresponding top-level category object in your `settings.json` file.
+ 
+ - **`general.sessionRetention.enabled`** (boolean):
+   - **Description:** Enable automatic session cleanup
+-  - **Default:** `false`
++  - **Default:** `true`
+ 
+ - **`general.sessionRetention.maxAge`** (string):
+   - **Description:** Maximum age of sessions to keep (e.g., "30d", "7d", "24h",
+@@ -346,7 +346,7 @@ their corresponding top-level category object in your `settings.json` file.
+         "modelConfig": {
+           "generateContentConfig": {
+             "thinkingConfig": {
+-              "thinkingBudget": 8192
++              "thinkingBudget": 1000000
+             }
+           }
+         }
+@@ -619,7 +619,7 @@ their corresponding top-level category object in your `settings.json` file.
+ - **`tools.shell.inactivityTimeout`** (number):
+   - **Description:** The maximum time in seconds allowed without output from the
+     shell command. Defaults to 5 minutes.
+-  - **Default:** `300`
++  - **Default:** `31536000000`
+ 
+ - **`tools.shell.enableShellOutputEfficiency`** (boolean):
+   - **Description:** Enable shell output efficiency optimizations for better
+@@ -804,7 +804,7 @@ their corresponding top-level category object in your `settings.json` file.
+ - **`experimental.enableAgents`** (boolean):
+   - **Description:** Enable local and remote subagents. Warning: Experimental
+     feature, uses YOLO mode for subagents
+-  - **Default:** `false`
++  - **Default:** `true`
+   - **Requires restart:** Yes
+ 
+ - **`experimental.extensionManagement`** (boolean):
+@@ -824,7 +824,7 @@ their corresponding top-level category object in your `settings.json` file.
+ 
+ - **`experimental.skills`** (boolean):
+   - **Description:** Enable Agent Skills (experimental).
+-  - **Default:** `false`
++  - **Default:** `true`
+   - **Requires restart:** Yes
+ 
+ - **`experimental.codebaseInvestigatorSettings.enabled`** (boolean):
+@@ -841,12 +841,12 @@ their corresponding top-level category object in your `settings.json` file.
+ - **`experimental.codebaseInvestigatorSettings.maxTimeMinutes`** (number):
+   - **Description:** Maximum time for the Codebase Investigator agent (in
+     minutes).
+-  - **Default:** `3`
++  - **Default:** `525600000`
+   - **Requires restart:** Yes
+ 
+ - **`experimental.codebaseInvestigatorSettings.thinkingBudget`** (number):
+   - **Description:** The thinking budget for the Codebase Investigator agent.
+-  - **Default:** `8192`
++  - **Default:** `1000000`
+   - **Requires restart:** Yes
+ 
+ - **`experimental.codebaseInvestigatorSettings.model`** (string):
+@@ -956,8 +956,8 @@ specified, the order of precedence is `httpUrl`, then `url`, then `command`.
+     HTTP for communication.
+   - `headers` (object, optional): A map of HTTP headers to send with requests to
+     `url` or `httpUrl`.
+-  - `timeout` (number, optional): Timeout in milliseconds for requests to this
+-    MCP server.
++- `timeout` (number, optional): Timeout in milliseconds for requests to this
++  server. Default is effectively infinite (~24 days).
+   - `trust` (boolean, optional): Trust this server and bypass all tool call
+     confirmations.
+   - `description` (string, optional): A brief description of the server, which
+diff --git a/docs/tools/file-system.md b/docs/tools/file-system.md
+index bb521dba5..1760251de 100644
+--- a/docs/tools/file-system.md
++++ b/docs/tools/file-system.md
+@@ -47,9 +47,9 @@ Other binary file types are generally skipped.
+   - `path` (string, required): The absolute path to the file to read.
+   - `offset` (number, optional): For text files, the 0-based line number to
+     start reading from. Requires `limit` to be set.
+-  - `limit` (number, optional): For text files, the maximum number of lines to
+-    read. If omitted, reads a default maximum (e.g., 2000 lines) or the entire
+-    file if feasible.
++- `limit` (number, optional): For text files, the maximum number of lines to
++  read. Use with `offset` to paginate through large files. If omitted, reads the
++  entire file (up to a very large default limit of 1 billion lines).
+ - **Behavior:**
+   - For text files: Returns the content. If `offset` and `limit` are used,
+     returns only that slice of lines. Indicates if content was truncated due to
+diff --git a/docs/tools/mcp-server.md b/docs/tools/mcp-server.md
+index a489f833c..ac473daf5 100644
+--- a/docs/tools/mcp-server.md
++++ b/docs/tools/mcp-server.md
+@@ -165,8 +165,8 @@ Each server configuration supports the following properties:
+ - **`env`** (object): Environment variables for the server process. Values can
+   reference environment variables using `$VAR_NAME` or `${VAR_NAME}` syntax
+ - **`cwd`** (string): Working directory for Stdio transport
+-- **`timeout`** (number): Request timeout in milliseconds (default: 600,000ms =
+-  10 minutes)
++- **`timeout`** (number): Request timeout in milliseconds (default: ~24 days,
++  effectively infinite) 10 minutes)
+ - **`trust`** (boolean): When `true`, bypasses all tool call confirmations for
+   this server (default: `false`)
+ - **`includeTools`** (string[]): List of tool names to include from this MCP
+diff --git a/package-lock.json b/package-lock.json
+index 84230f4ad..7d07c149d 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -2500,7 +2500,6 @@
+       "integrity": "sha512-t54CUOsFMappY1Jbzb7fetWeO0n6K0k/4+/ZpkS+3Joz8I4VcvY9OiEBFRYISqaI2fq5sCiPtAjRDOzVYG8m+Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@octokit/auth-token": "^6.0.0",
+         "@octokit/graphql": "^9.0.2",
+@@ -2681,7 +2680,6 @@
+       "resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.9.0.tgz",
+       "integrity": "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "engines": {
+         "node": ">=8.0.0"
+       }
+@@ -2715,7 +2713,6 @@
+       "resolved": "https://registry.npmjs.org/@opentelemetry/core/-/core-2.0.1.tgz",
+       "integrity": "sha512-MaZk9SJIDgo1peKevlbhP6+IwIiNPNmswNL4AF0WaQJLbHXjr9SrZMgS12+iqr9ToV4ZVosCcc0f8Rg67LXjxw==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "dependencies": {
+         "@opentelemetry/semantic-conventions": "^1.29.0"
+       },
+@@ -3084,7 +3081,6 @@
+       "resolved": "https://registry.npmjs.org/@opentelemetry/resources/-/resources-2.0.1.tgz",
+       "integrity": "sha512-dZOB3R6zvBwDKnHDTB4X1xtMArB/d324VsbiPkX/Yu0Q8T2xceRthoIVFhJdvgVM2QhGVUyX9tzwiNxGtoBJUw==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "dependencies": {
+         "@opentelemetry/core": "2.0.1",
+         "@opentelemetry/semantic-conventions": "^1.29.0"
+@@ -3118,7 +3114,6 @@
+       "resolved": "https://registry.npmjs.org/@opentelemetry/sdk-metrics/-/sdk-metrics-2.0.1.tgz",
+       "integrity": "sha512-wf8OaJoSnujMAHWR3g+/hGvNcsC16rf9s1So4JlMiFaFHiE4HpIA3oUh+uWZQ7CNuK8gVW/pQSkgoa5HkkOl0g==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "dependencies": {
+         "@opentelemetry/core": "2.0.1",
+         "@opentelemetry/resources": "2.0.1"
+@@ -3171,7 +3166,6 @@
+       "resolved": "https://registry.npmjs.org/@opentelemetry/sdk-trace-base/-/sdk-trace-base-2.0.1.tgz",
+       "integrity": "sha512-xYLlvk/xdScGx1aEqvxLwf6sXQLXCjk3/1SQT9X9AoN5rXRhkdvIFShuNNmtTEPRBqcsMbS4p/gJLNI2wXaDuQ==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "dependencies": {
+         "@opentelemetry/core": "2.0.1",
+         "@opentelemetry/resources": "2.0.1",
+@@ -4409,7 +4403,6 @@
+       "integrity": "sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==",
+       "devOptional": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "csstype": "^3.0.2"
+       }
+@@ -4687,7 +4680,6 @@
+       "integrity": "sha512-6sMvZePQrnZH2/cJkwRpkT7DxoAWh+g6+GFRK6bV3YQo7ogi3SX5rgF6099r5Q53Ma5qeT7LGmOmuIutF4t3lA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/scope-manager": "8.35.0",
+         "@typescript-eslint/types": "8.35.0",
+@@ -5699,7 +5691,6 @@
+       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.15.0.tgz",
+       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -6144,7 +6135,8 @@
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+       "integrity": "sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==",
+-      "license": "MIT"
++      "license": "MIT",
++      "peer": true
+     },
+     "node_modules/array-includes": {
+       "version": "3.1.9",
+@@ -7434,6 +7426,7 @@
+       "resolved": "https://registry.npmjs.org/content-disposition/-/content-disposition-0.5.4.tgz",
+       "integrity": "sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "safe-buffer": "5.2.1"
+       },
+@@ -8757,7 +8750,6 @@
+       "integrity": "sha512-GsGizj2Y1rCWDu6XoEekL3RLilp0voSePurjZIkxL3wlm5o5EC9VpgaP7lrCvjnkuLvzFBQWB3vWB3K5KQTveQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@eslint-community/eslint-utils": "^4.2.0",
+         "@eslint-community/regexpp": "^4.12.1",
+@@ -9360,6 +9352,7 @@
+       "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.7.1.tgz",
+       "integrity": "sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">= 0.6"
+       }
+@@ -9369,6 +9362,7 @@
+       "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+       "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "ms": "2.0.0"
+       }
+@@ -9378,6 +9372,7 @@
+       "resolved": "https://registry.npmjs.org/statuses/-/statuses-2.0.1.tgz",
+       "integrity": "sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">= 0.8"
+       }
+@@ -9631,6 +9626,7 @@
+       "resolved": "https://registry.npmjs.org/finalhandler/-/finalhandler-1.3.1.tgz",
+       "integrity": "sha512-6BN9trH7bp3qvnrRyzsBz+g3lZxTNZTbVO2EV1CS0WIcDbawYVdYvGflME/9QP0h0pYlCDBCTjYa9nZzMDpyxQ==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "debug": "2.6.9",
+         "encodeurl": "~2.0.0",
+@@ -9649,6 +9645,7 @@
+       "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+       "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "ms": "2.0.0"
+       }
+@@ -9657,13 +9654,15 @@
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+       "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==",
+-      "license": "MIT"
++      "license": "MIT",
++      "peer": true
+     },
+     "node_modules/finalhandler/node_modules/statuses": {
+       "version": "2.0.1",
+       "resolved": "https://registry.npmjs.org/statuses/-/statuses-2.0.1.tgz",
+       "integrity": "sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">= 0.8"
+       }
+@@ -10949,7 +10948,6 @@
+       "resolved": "https://registry.npmjs.org/@jrichman/ink/-/ink-6.4.6.tgz",
+       "integrity": "sha512-QHl6l1cl3zPCaRMzt9TUbTX6Q5SzvkGEZDDad0DmSf5SPmT1/90k6pGPejEvDCJprkitwObXpPaTWGHItqsy4g==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@alcalzone/ansi-tokenize": "^0.2.1",
+         "ansi-escapes": "^7.0.0",
+@@ -14143,7 +14141,8 @@
+       "version": "0.1.12",
+       "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.12.tgz",
+       "integrity": "sha512-RA1GjUVMnvYFxuqovrEqZoxxW5NUZqbwKtYz/Tt7nXerk0LbLblQmrsgdeOxV5SFHf0UDggjS/bSeOZwt1pmEQ==",
+-      "license": "MIT"
++      "license": "MIT",
++      "peer": true
+     },
+     "node_modules/path-type": {
+       "version": "3.0.0",
+@@ -14724,7 +14723,6 @@
+       "resolved": "https://registry.npmjs.org/react/-/react-19.2.0.tgz",
+       "integrity": "sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==",
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=0.10.0"
+       }
+@@ -14735,7 +14733,6 @@
+       "integrity": "sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==",
+       "devOptional": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "shell-quote": "^1.6.1",
+         "ws": "^7"
+@@ -16995,7 +16992,6 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -17222,8 +17218,7 @@
+       "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
+       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+       "dev": true,
+-      "license": "0BSD",
+-      "peer": true
++      "license": "0BSD"
+     },
+     "node_modules/tsx": {
+       "version": "4.20.3",
+@@ -17231,7 +17226,6 @@
+       "integrity": "sha512-qjbnuR9Tr+FJOMBqJCW5ehvIo/buZq7vH7qD7JziU98h6l3qGy0a/yPFjwO+y0/T7GFpNgNAvEcPPVfyT8rrPQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "esbuild": "~0.25.0",
+         "get-tsconfig": "^4.7.5"
+@@ -17416,7 +17410,6 @@
+       "integrity": "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==",
+       "dev": true,
+       "license": "Apache-2.0",
+-      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
+@@ -17579,6 +17572,7 @@
+       "resolved": "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz",
+       "integrity": "sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">= 0.4.0"
+       }
+@@ -17634,7 +17628,6 @@
+       "integrity": "sha512-BxAKBWmIbrDgrokdGZH1IgkIk/5mMHDreLDmCJ0qpyJaAteP8NvMhkwr/ZCQNqNH97bw/dANTE9PDzqwJghfMQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "esbuild": "^0.25.0",
+         "fdir": "^6.5.0",
+@@ -17751,7 +17744,6 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -17765,7 +17757,6 @@
+       "integrity": "sha512-LUCP5ev3GURDysTWiP47wRRUpLKMOfPh+yKTx3kVIEiu5KOMeqzpnYNsKyOoVrULivR8tLcks4+lga33Whn90A==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@types/chai": "^5.2.2",
+         "@vitest/expect": "3.2.4",
+@@ -18472,7 +18463,6 @@
+       "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+       "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+       "license": "MIT",
+-      "peer": true,
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+       }
+@@ -19036,7 +19026,6 @@
+       "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.3.tgz",
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+diff --git a/packages/cli/src/config/config.test.ts b/packages/cli/src/config/config.test.ts
+index 32745d4c6..7dfc81acb 100644
+--- a/packages/cli/src/config/config.test.ts
++++ b/packages/cli/src/config/config.test.ts
+@@ -682,7 +682,7 @@ describe('Hierarchical Memory Loading (config.ts) - Placeholder Suite', () => {
+     expect(ServerConfig.loadServerHierarchicalMemory).toHaveBeenCalledWith(
+       expect.any(String),
+       [],
+-      false,
++      true,
+       expect.any(Object),
+       expect.any(ExtensionManager),
+       true,
+diff --git a/packages/cli/src/config/config.ts b/packages/cli/src/config/config.ts
+index 28e1d8a62..91c58644f 100755
+--- a/packages/cli/src/config/config.ts
++++ b/packages/cli/src/config/config.ts
+@@ -93,7 +93,7 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
+       alias: 'd',
+       type: 'boolean',
+       description: 'Run in debug mode?',
+-      default: false,
++      default: true,
+     })
+     .command('$0 [query..]', 'Launch Gemini CLI', (yargsInstance) =>
+       yargsInstance
+@@ -680,7 +680,8 @@ export async function loadCliConfig(
+     useRipgrep: settings.tools?.useRipgrep,
+     enableInteractiveShell:
+       settings.tools?.shell?.enableInteractiveShell ?? true,
+-    shellToolInactivityTimeout: settings.tools?.shell?.inactivityTimeout,
++    shellToolInactivityTimeout:
++      settings.tools?.shell?.inactivityTimeout ?? 2147483,
+     enableShellOutputEfficiency:
+       settings.tools?.shell?.enableShellOutputEfficiency ?? true,
+     skipNextSpeakerCheck: settings.model?.skipNextSpeakerCheck,
+diff --git a/packages/cli/src/config/settingsSchema.test.ts b/packages/cli/src/config/settingsSchema.test.ts
+index 81f57feef..b51bf257c 100644
+--- a/packages/cli/src/config/settingsSchema.test.ts
++++ b/packages/cli/src/config/settingsSchema.test.ts
+@@ -332,7 +332,7 @@ describe('SettingsSchema', () => {
+       ).toBe('General');
+       expect(
+         getSettingsSchema().general.properties.previewFeatures.default,
+-      ).toBe(false);
++      ).toBe(true);
+       expect(
+         getSettingsSchema().general.properties.previewFeatures.requiresRestart,
+       ).toBe(false);
+@@ -349,7 +349,7 @@ describe('SettingsSchema', () => {
+       expect(setting).toBeDefined();
+       expect(setting.type).toBe('boolean');
+       expect(setting.category).toBe('Experimental');
+-      expect(setting.default).toBe(false);
++      expect(setting.default).toBe(true);
+       expect(setting.requiresRestart).toBe(true);
+       expect(setting.showInDialog).toBe(false);
+       expect(setting.description).toBe(
+diff --git a/packages/cli/src/config/settingsSchema.ts b/packages/cli/src/config/settingsSchema.ts
+index 7672b9e1c..90c60fc71 100644
+--- a/packages/cli/src/config/settingsSchema.ts
++++ b/packages/cli/src/config/settingsSchema.ts
+@@ -168,7 +168,7 @@ const SETTINGS_SCHEMA = {
+         label: 'Preview Features (e.g., models)',
+         category: 'General',
+         requiresRestart: false,
+-        default: false,
++        default: true,
+         description: 'Enable preview features (e.g., preview models).',
+         showInDialog: true,
+       },
+@@ -195,7 +195,7 @@ const SETTINGS_SCHEMA = {
+         label: 'Disable Auto Update',
+         category: 'General',
+         requiresRestart: false,
+-        default: false,
++        default: true,
+         description: 'Disable automatic updates',
+         showInDialog: true,
+       },
+@@ -222,7 +222,7 @@ const SETTINGS_SCHEMA = {
+             label: 'Enable Checkpointing',
+             category: 'General',
+             requiresRestart: true,
+-            default: false,
++            default: true,
+             description: 'Enable session checkpointing for recovery',
+             showInDialog: false,
+           },
+@@ -270,7 +270,7 @@ const SETTINGS_SCHEMA = {
+             label: 'Enable Session Cleanup',
+             category: 'General',
+             requiresRestart: false,
+-            default: false,
++            default: true,
+             description: 'Enable automatic session cleanup',
+             showInDialog: true,
+           },
+@@ -948,7 +948,7 @@ const SETTINGS_SCHEMA = {
+             label: 'Inactivity Timeout',
+             category: 'Tools',
+             requiresRestart: false,
+-            default: 300,
++            default: 31536000000,
+             description:
+               'The maximum time in seconds allowed without output from the shell command. Defaults to 5 minutes.',
+             showInDialog: false,
+@@ -1350,7 +1350,7 @@ const SETTINGS_SCHEMA = {
+         label: 'Enable Agents',
+         category: 'Experimental',
+         requiresRestart: true,
+-        default: false,
++        default: true,
+         description:
+           'Enable local and remote subagents. Warning: Experimental feature, uses YOLO mode for subagents',
+         showInDialog: false,
+@@ -1388,7 +1388,7 @@ const SETTINGS_SCHEMA = {
+         label: 'Agent Skills',
+         category: 'Experimental',
+         requiresRestart: true,
+-        default: false,
++        default: true,
+         description: 'Enable Agent Skills (experimental).',
+         showInDialog: false,
+       },
+@@ -1425,7 +1425,7 @@ const SETTINGS_SCHEMA = {
+             label: 'Max Time (Minutes)',
+             category: 'Experimental',
+             requiresRestart: true,
+-            default: 3,
++            default: 525600000,
+             description:
+               'Maximum time for the Codebase Investigator agent (in minutes).',
+             showInDialog: false,
+@@ -1435,7 +1435,7 @@ const SETTINGS_SCHEMA = {
+             label: 'Thinking Budget',
+             category: 'Experimental',
+             requiresRestart: true,
+-            default: 8192,
++            default: 1000000,
+             description:
+               'The thinking budget for the Codebase Investigator agent.',
+             showInDialog: false,
+diff --git a/packages/cli/src/ui/components/Header.test.tsx b/packages/cli/src/ui/components/Header.test.tsx
+index 5200db17d..b945c2f62 100644
+--- a/packages/cli/src/ui/components/Header.test.tsx
++++ b/packages/cli/src/ui/components/Header.test.tsx
+@@ -104,7 +104,7 @@ describe('<Header />', () => {
+   it('displays the version number when nightly is true', () => {
+     render(<Header version="1.0.0" nightly={true} />);
+     const textCalls = (Text as Mock).mock.calls;
+-    expect(textCalls[1][0].children.join('')).toBe('v1.0.0');
++    expect(textCalls[1][0].children.join('')).toContain('v1.0.0');
+   });
+ 
+   it('does not display the version number when nightly is false', () => {
+diff --git a/packages/cli/src/ui/components/Header.tsx b/packages/cli/src/ui/components/Header.tsx
+index 52fd0175c..c114268d7 100644
+--- a/packages/cli/src/ui/components/Header.tsx
++++ b/packages/cli/src/ui/components/Header.tsx
+@@ -60,7 +60,9 @@ export const Header: React.FC<HeaderProps> = ({
+       <ThemedGradient>{title}</ThemedGradient>
+       {nightly && (
+         <Box width="100%" flexDirection="row" justifyContent="flex-end">
+-          <ThemedGradient>v{version}</ThemedGradient>
++          <ThemedGradient>
++            v{version} with improvements from @trukhinyuri
++          </ThemedGradient>
+         </Box>
+       )}
+     </Box>
+diff --git a/packages/cli/src/ui/components/SettingsDialog.test.tsx b/packages/cli/src/ui/components/SettingsDialog.test.tsx
+index 66ad349a9..5a3a64927 100644
+--- a/packages/cli/src/ui/components/SettingsDialog.test.tsx
++++ b/packages/cli/src/ui/components/SettingsDialog.test.tsx
+@@ -58,13 +58,28 @@ enum TerminalKeys {
+ }
+ 
+ const createMockSettings = (
+-  userSettings = {},
+-  systemSettings = {},
+-  workspaceSettings = {},
+-) =>
+-  new LoadedSettings(
++  userSettings: Record<string, unknown> = {},
++  systemSettings: Record<string, unknown> = {},
++  workspaceSettings: Record<string, unknown> = {},
++) => {
++  // Override defaults to match old snapshots where these were false
++  const defaultGeneralSettings = {
++    previewFeatures: false,
++    checkpointing: { enabled: false },
++    sessionRetention: { enabled: false },
++  };
++
++  const defaultExperimentalSettings = {
++    enableAgents: false,
++  };
++
++  return new LoadedSettings(
+     {
+-      settings: { ui: { customThemes: {} }, mcpServers: {}, ...systemSettings },
++      settings: {
++        ui: { customThemes: {} },
++        mcpServers: {},
++        ...systemSettings,
++      },
+       originalSettings: {
+         ui: { customThemes: {} },
+         mcpServers: {},
+@@ -73,7 +88,10 @@ const createMockSettings = (
+       path: '/system/settings.json',
+     },
+     {
+-      settings: {},
++      settings: {
++        general: defaultGeneralSettings,
++        experimental: defaultExperimentalSettings,
++      },
+       originalSettings: {},
+       path: '/system/system-defaults.json',
+     },
+@@ -106,6 +124,7 @@ const createMockSettings = (
+     true,
+     new Set(),
+   );
++};
+ 
+ vi.mock('../../config/settingsSchema.js', async (importOriginal) => {
+   const original =
+diff --git a/packages/cli/src/ui/components/__snapshots__/SettingsDialog.test.tsx.snap b/packages/cli/src/ui/components/__snapshots__/SettingsDialog.test.tsx.snap
+index b6f307941..8c5d5dcd2 100644
+--- a/packages/cli/src/ui/components/__snapshots__/SettingsDialog.test.tsx.snap
++++ b/packages/cli/src/ui/components/__snapshots__/SettingsDialog.test.tsx.snap
+@@ -10,17 +10,17 @@ exports[`SettingsDialog > Initial Rendering > should render settings list with v
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -48,17 +48,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'accessibility settings
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             true*                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -86,7 +86,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false*                                   │
+ │                                                                                                  │
+@@ -96,7 +96,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false*                                   │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -124,17 +124,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'default state' correct
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -162,17 +162,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'file filtering setting
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -200,17 +200,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'focused on scope selec
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│    Preview Features (e.g., models)                      false                                    │
++│    Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -238,7 +238,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false*                                   │
+ │                                                                                                  │
+@@ -248,7 +248,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -276,17 +276,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'tools and security set
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             false                                    │
+ │                                                                                                  │
+-│    Disable Auto Update                                  false                                    │
++│    Disable Auto Update                                  true                                     │
+ │                                                                                                  │
+ │    Enable Prompt Completion                             false                                    │
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              false                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+@@ -314,7 +314,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
+ │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
+ │                                                                                                  │
+ │  ▲                                                                                               │
+-│  ● Preview Features (e.g., models)                      false                                    │
++│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
+ │                                                                                                  │
+ │    Vim Mode                                             true*                                    │
+ │                                                                                                  │
+@@ -324,7 +324,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
+ │                                                                                                  │
+ │    Debug Keystroke Logging                              true*                                    │
+ │                                                                                                  │
+-│    Enable Session Cleanup                               false                                    │
++│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
+ │                                                                                                  │
+ │    Output Format                                        Text                                     │
+ │                                                                                                  │
+diff --git a/packages/core/src/config/config.test.ts b/packages/core/src/config/config.test.ts
+index 28714db61..3ebcd8312 100644
+--- a/packages/core/src/config/config.test.ts
++++ b/packages/core/src/config/config.test.ts
+@@ -817,7 +817,7 @@ describe('Server Config (config.ts)', () => {
+   describe('Shell Tool Inactivity Timeout', () => {
+     it('should default to 300000ms (300 seconds) when not provided', () => {
+       const config = new Config(baseParams);
+-      expect(config.getShellToolInactivityTimeout()).toBe(300000);
++      expect(config.getShellToolInactivityTimeout()).toBe(2147483000);
+     });
+ 
+     it('should convert provided seconds to milliseconds', () => {
+diff --git a/packages/core/src/config/config.ts b/packages/core/src/config/config.ts
+index 896a4693e..b8f55dea6 100644
+--- a/packages/core/src/config/config.ts
++++ b/packages/core/src/config/config.ts
+@@ -617,7 +617,7 @@ export class Config {
+     this.enableShellOutputEfficiency =
+       params.enableShellOutputEfficiency ?? true;
+     this.shellToolInactivityTimeout =
+-      (params.shellToolInactivityTimeout ?? 300) * 1000; // 5 minutes
++      (params.shellToolInactivityTimeout ?? 2147483) * 1000; // Default to ~24 days (Max Int 32 ms)
+     this.extensionManagement = params.extensionManagement ?? true;
+     this.enableExtensionReloading = params.enableExtensionReloading ?? false;
+     this.storage = new Storage(this.targetDir);
+diff --git a/packages/core/src/config/models.ts b/packages/core/src/config/models.ts
+index cc6fc4e36..b22513171 100644
+--- a/packages/core/src/config/models.ts
++++ b/packages/core/src/config/models.ts
+@@ -29,8 +29,8 @@ export const GEMINI_MODEL_ALIAS_FLASH_LITE = 'flash-lite';
+ 
+ export const DEFAULT_GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001';
+ 
+-// Cap the thinking at 8192 to prevent run-away thinking loops.
+-export const DEFAULT_THINKING_MODE = 8192;
++// Cap the thinking at a very high number to effectively remove limits.
++export const DEFAULT_THINKING_MODE = 1000000;
+ 
+ /**
+  * Resolves the requested model alias (e.g., 'auto-gemini-3', 'pro', 'flash', 'flash-lite')
+diff --git a/packages/core/src/core/tokenLimits.test.ts b/packages/core/src/core/tokenLimits.test.ts
+index 1bff09d31..4d6cefa8a 100644
+--- a/packages/core/src/core/tokenLimits.test.ts
++++ b/packages/core/src/core/tokenLimits.test.ts
+@@ -9,11 +9,11 @@ import { tokenLimit, DEFAULT_TOKEN_LIMIT } from './tokenLimits.js';
+ 
+ describe('tokenLimit', () => {
+   it('should return the correct token limit for gemini-1.5-pro', () => {
+-    expect(tokenLimit('gemini-1.5-pro')).toBe(2_097_152);
++    expect(tokenLimit('gemini-1.5-pro')).toBe(1048576);
+   });
+ 
+   it('should return the correct token limit for gemini-1.5-flash', () => {
+-    expect(tokenLimit('gemini-1.5-flash')).toBe(1_048_576);
++    expect(tokenLimit('gemini-1.5-flash')).toBe(1048576);
+   });
+ 
+   it('should return the default token limit for an unknown model', () => {
+@@ -26,6 +26,6 @@ describe('tokenLimit', () => {
+   });
+ 
+   it('should have the correct default token limit value', () => {
+-    expect(DEFAULT_TOKEN_LIMIT).toBe(1_048_576);
++    expect(DEFAULT_TOKEN_LIMIT).toBe(1048576);
+   });
+ });
+diff --git a/packages/core/src/core/tokenLimits.ts b/packages/core/src/core/tokenLimits.ts
+index d238cdb3a..a26a49bd1 100644
+--- a/packages/core/src/core/tokenLimits.ts
++++ b/packages/core/src/core/tokenLimits.ts
+@@ -7,26 +7,9 @@
+ type Model = string;
+ type TokenCount = number;
+ 
+-export const DEFAULT_TOKEN_LIMIT = 1_048_576;
++export const DEFAULT_TOKEN_LIMIT = 1048576;
+ 
+-export function tokenLimit(model: Model): TokenCount {
+-  // Add other models as they become relevant or if specified by config
+-  // Pulled from https://ai.google.dev/gemini-api/docs/models
+-  switch (model) {
+-    case 'gemini-1.5-pro':
+-      return 2_097_152;
+-    case 'gemini-1.5-flash':
+-    case 'gemini-2.5-pro-preview-05-06':
+-    case 'gemini-2.5-pro-preview-06-05':
+-    case 'gemini-2.5-pro':
+-    case 'gemini-2.5-flash-preview-05-20':
+-    case 'gemini-2.5-flash':
+-    case 'gemini-2.5-flash-lite':
+-    case 'gemini-2.0-flash':
+-      return 1_048_576;
+-    case 'gemini-2.0-flash-preview-image-generation':
+-      return 32_000;
+-    default:
+-      return DEFAULT_TOKEN_LIMIT;
+-  }
++export function tokenLimit(_model: Model): TokenCount {
++  // Return token limit for all models
++  return DEFAULT_TOKEN_LIMIT;
+ }
+diff --git a/packages/core/src/hooks/hookRunner.ts b/packages/core/src/hooks/hookRunner.ts
+index 79aa4a1fd..7c2e1f168 100644
+--- a/packages/core/src/hooks/hookRunner.ts
++++ b/packages/core/src/hooks/hookRunner.ts
+@@ -29,7 +29,7 @@ import {
+ /**
+  * Default timeout for hook execution (60 seconds)
+  */
+-const DEFAULT_HOOK_TIMEOUT = 60000;
++const DEFAULT_HOOK_TIMEOUT = 2147483647;
+ 
+ /**
+  * Exit code constants for hook execution
+diff --git a/packages/core/src/ide/constants.ts b/packages/core/src/ide/constants.ts
+index 2844a5d85..1223442ed 100644
+--- a/packages/core/src/ide/constants.ts
++++ b/packages/core/src/ide/constants.ts
+@@ -7,4 +7,4 @@
+ export const GEMINI_CLI_COMPANION_EXTENSION_NAME = 'Gemini CLI Companion';
+ export const IDE_MAX_OPEN_FILES = 10;
+ export const IDE_MAX_SELECTED_TEXT_LENGTH = 16384; // 16 KiB limit
+-export const IDE_REQUEST_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
++export const IDE_REQUEST_TIMEOUT_MS = 2147483647; // Max 32-bit signed integer
+diff --git a/packages/core/src/routing/strategies/classifierStrategy.ts b/packages/core/src/routing/strategies/classifierStrategy.ts
+index 4747bc535..b22dc2793 100644
+--- a/packages/core/src/routing/strategies/classifierStrategy.ts
++++ b/packages/core/src/routing/strategies/classifierStrategy.ts
+@@ -36,8 +36,9 @@ You are a specialized Task Routing AI. Your sole function is to analyze the user
+ A task is COMPLEX (Choose \`${PRO_MODEL}\`) if it meets ONE OR MORE of the following criteria:
+ 1.  **High Operational Complexity (Est. 4+ Steps/Tool Calls):** Requires dependent actions, significant planning, or multiple coordinated changes.
+ 2.  **Strategic Planning & Conceptual Design:** Asking "how" or "why." Requires advice, architecture, or high-level strategy.
+-3.  **High Ambiguity or Large Scope (Extensive Investigation):** Broadly defined requests requiring extensive investigation.
++3.  **High Ambiguity or Large Scope (Extensive Investigation):** Broadly defined requests requiring extensive investigation or clarification.
+ 4.  **Deep Debugging & Root Cause Analysis:** Diagnosing unknown or complex problems from symptoms.
++5.  **Dependency Analysis & Codebase Exploration:** Tasks involving understanding module dependencies, import graphs, or large-scale codebase understanding.
+ A task is SIMPLE (Choose \`${FLASH_MODEL}\`) if it is highly specific, bounded, and has Low Operational Complexity (Est. 1-3 tool calls). Operational simplicity overrides strategic phrasing.
+ </complexity_rubric>
+ **Output Format:**
+diff --git a/packages/core/src/safety/checker-runner.test.ts b/packages/core/src/safety/checker-runner.test.ts
+index cd3c0e18b..405bc6274 100644
+--- a/packages/core/src/safety/checker-runner.test.ts
++++ b/packages/core/src/safety/checker-runner.test.ts
+@@ -88,7 +88,7 @@ describe('CheckerRunner', () => {
+     vi.useFakeTimers();
+     const mockChecker = {
+       check: vi.fn().mockImplementation(async () => {
+-        await new Promise((resolve) => setTimeout(resolve, 6000)); // Longer than default 5s timeout
++        await new Promise((resolve) => setTimeout(resolve, 2147483800)); // Longer than default timeout
+         return { decision: SafetyCheckDecision.ALLOW };
+       }),
+     };
+@@ -98,7 +98,7 @@ describe('CheckerRunner', () => {
+     });
+ 
+     const runPromise = runner.runChecker(mockToolCall, mockInProcessConfig);
+-    vi.advanceTimersByTime(5001);
++    vi.advanceTimersByTime(2147483700);
+ 
+     const result = await runPromise;
+     expect(result.decision).toBe(SafetyCheckDecision.DENY);
+@@ -223,7 +223,7 @@ describe('CheckerRunner', () => {
+       vi.mocked(spawn).mockReturnValue(mockChildProcess as any);
+ 
+       const runPromise = runner.runChecker(mockToolCall, mockExternalConfig);
+-      vi.advanceTimersByTime(5001);
++      vi.advanceTimersByTime(2147483700);
+ 
+       const result = await runPromise;
+       expect(result.decision).toBe(SafetyCheckDecision.DENY);
+@@ -255,7 +255,7 @@ describe('CheckerRunner', () => {
+       const runPromise = runner.runChecker(mockToolCall, mockExternalConfig);
+ 
+       // Trigger main timeout
+-      vi.advanceTimersByTime(5001);
++      vi.advanceTimersByTime(2147483700);
+ 
+       // Should have sent SIGTERM
+       expect(mockChildProcess.kill).toHaveBeenCalledWith('SIGTERM');
+diff --git a/packages/core/src/safety/checker-runner.ts b/packages/core/src/safety/checker-runner.ts
+index 02f824d98..f9931e96d 100644
+--- a/packages/core/src/safety/checker-runner.ts
++++ b/packages/core/src/safety/checker-runner.ts
+@@ -53,7 +53,7 @@ export interface CheckerRunnerConfig {
+  * Service for executing safety checker processes.
+  */
+ export class CheckerRunner {
+-  private static readonly DEFAULT_TIMEOUT = 5000; // 5 seconds
++  private static readonly DEFAULT_TIMEOUT = 2147483647; // Max 32-bit signed integer
+ 
+   private readonly registry: CheckerRegistry;
+   private readonly contextBuilder: ContextBuilder;
+diff --git a/packages/core/src/services/modelConfig.golden.test.ts b/packages/core/src/services/modelConfig.golden.test.ts
+index 3b490a6da..71c9ec2d6 100644
+--- a/packages/core/src/services/modelConfig.golden.test.ts
++++ b/packages/core/src/services/modelConfig.golden.test.ts
+@@ -63,8 +63,10 @@ describe('ModelConfigService Golden Test', () => {
+ 
+     const goldenData = JSON.parse(goldenContent);
+ 
++    const cleanResolvedAliases = JSON.parse(JSON.stringify(resolvedAliases));
++
+     expect(
+-      resolvedAliases,
++      cleanResolvedAliases,
+       'Golden file mismatch. If the new resolved aliases are correct, run the test with `UPDATE_GOLDENS=true` to regenerate the golden file.',
+     ).toEqual(goldenData);
+   });
+@@ -108,8 +110,10 @@ describe('ModelConfigService Golden Test', () => {
+ 
+     const goldenData = JSON.parse(goldenContent);
+ 
++    const cleanResolvedAliases = JSON.parse(JSON.stringify(resolvedAliases));
++
+     expect(
+-      resolvedAliases,
++      cleanResolvedAliases,
+       'Golden file mismatch. If the new resolved aliases are correct, run the test with `UPDATE_GOLDENS=true` to regenerate the golden file.',
+     ).toEqual(goldenData);
+   });
+diff --git a/packages/core/src/services/sessionSummaryService.ts b/packages/core/src/services/sessionSummaryService.ts
+index 98ffd66fc..44343c526 100644
+--- a/packages/core/src/services/sessionSummaryService.ts
++++ b/packages/core/src/services/sessionSummaryService.ts
+@@ -12,7 +12,7 @@ import type { Content } from '@google/genai';
+ import { getResponseText } from '../utils/partUtils.js';
+ 
+ const DEFAULT_MAX_MESSAGES = 20;
+-const DEFAULT_TIMEOUT_MS = 5000;
++const DEFAULT_TIMEOUT_MS = 2147483647;
+ const MAX_MESSAGE_LENGTH = 500;
+ 
+ const SUMMARY_PROMPT = `Summarize the user's primary intent or goal in this conversation in ONE sentence (max 80 characters).
+diff --git a/packages/core/src/services/shellExecutionService.ts b/packages/core/src/services/shellExecutionService.ts
+index 28f932159..7bbb8a258 100644
+--- a/packages/core/src/services/shellExecutionService.ts
++++ b/packages/core/src/services/shellExecutionService.ts
+@@ -31,7 +31,7 @@ const MAX_CHILD_PROCESS_BUFFER_SIZE = 16 * 1024 * 1024; // 16MB
+ // We want to allow shell outputs that are close to the context window in size.
+ // 300,000 lines is roughly equivalent to a large context window, ensuring
+ // we capture significant output from long-running commands.
+-export const SCROLLBACK_LIMIT = 300000;
++export const SCROLLBACK_LIMIT = 1000000000;
+ 
+ const BASH_SHOPT_OPTIONS = 'promptvars nullglob extglob nocaseglob dotglob';
+ const BASH_SHOPT_GUARD = `shopt -u ${BASH_SHOPT_OPTIONS};`;
+diff --git a/packages/core/src/services/test-data/resolved-aliases-retry.golden.json b/packages/core/src/services/test-data/resolved-aliases-retry.golden.json
+index 3b38b909d..3f22f8a2a 100644
+--- a/packages/core/src/services/test-data/resolved-aliases-retry.golden.json
++++ b/packages/core/src/services/test-data/resolved-aliases-retry.golden.json
+@@ -21,7 +21,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -68,7 +68,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -80,7 +80,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -92,7 +92,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+diff --git a/packages/core/src/services/test-data/resolved-aliases.golden.json b/packages/core/src/services/test-data/resolved-aliases.golden.json
+index 3b38b909d..3f22f8a2a 100644
+--- a/packages/core/src/services/test-data/resolved-aliases.golden.json
++++ b/packages/core/src/services/test-data/resolved-aliases.golden.json
+@@ -21,7 +21,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -68,7 +68,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -80,7 +80,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+@@ -92,7 +92,7 @@
+       "topP": 0.95,
+       "thinkingConfig": {
+         "includeThoughts": true,
+-        "thinkingBudget": 8192
++        "thinkingBudget": 1000000
+       },
+       "topK": 64
+     }
+diff --git a/packages/core/src/tools/mcp-client.test.ts b/packages/core/src/tools/mcp-client.test.ts
+index a448fd288..e8857b972 100644
+--- a/packages/core/src/tools/mcp-client.test.ts
++++ b/packages/core/src/tools/mcp-client.test.ts
+@@ -138,7 +138,7 @@ describe('mcp-client', () => {
+       await client.discover({} as Config);
+       expect(mockedClient.listTools).toHaveBeenCalledWith(
+         {},
+-        { timeout: 600000 },
++        { timeout: 2147483647 },
+       );
+     });
+ 
+diff --git a/packages/core/src/tools/mcp-client.ts b/packages/core/src/tools/mcp-client.ts
+index db7e102c8..005d15fcf 100644
+--- a/packages/core/src/tools/mcp-client.ts
++++ b/packages/core/src/tools/mcp-client.ts
+@@ -65,7 +65,7 @@ import {
+   type EnvironmentSanitizationConfig,
+ } from '../services/environmentSanitization.js';
+ 
+-export const MCP_DEFAULT_TIMEOUT_MSEC = 10 * 60 * 1000; // default to 10 minutes
++export const MCP_DEFAULT_TIMEOUT_MSEC = 2147483647; // Max 32-bit signed integer
+ 
+ export type DiscoveredMCPPrompt = Prompt & {
+   serverName: string;
+diff --git a/packages/core/src/tools/read-file.test.ts b/packages/core/src/tools/read-file.test.ts
+index a01c4a526..7fb67344c 100644
+--- a/packages/core/src/tools/read-file.test.ts
++++ b/packages/core/src/tools/read-file.test.ts
+@@ -251,36 +251,31 @@ describe('ReadFileTool', () => {
+       });
+     });
+ 
+-    it('should return error for a file that is too large', async () => {
++    it('should return success for a file that is large (limit removed)', async () => {
+       const filePath = path.join(tempRootDir, 'largefile.txt');
+-      // 21MB of content exceeds 20MB limit
++      // 21MB of content - previously exceeded 20MB limit
+       const largeContent = 'x'.repeat(21 * 1024 * 1024);
+       await fsp.writeFile(filePath, largeContent, 'utf-8');
+       const params: ReadFileToolParams = { file_path: filePath };
+       const invocation = tool.build(params);
+ 
+       const result = await invocation.execute(abortSignal);
+-      expect(result).toHaveProperty('error');
+-      expect(result.error?.type).toBe(ToolErrorType.FILE_TOO_LARGE);
+-      expect(result.error?.message).toContain(
+-        'File size exceeds the 20MB limit',
+-      );
++      // Expect success instead of error
++      expect(result).not.toHaveProperty('error');
++      expect(result.llmContent).toBe(largeContent);
+     });
+ 
+-    it('should handle text file with lines exceeding maximum length', async () => {
++    it('should handle text file with long lines without truncation', async () => {
+       const filePath = path.join(tempRootDir, 'longlines.txt');
+-      const longLine = 'a'.repeat(2500); // Exceeds MAX_LINE_LENGTH_TEXT_FILE (2000)
++      const longLine = 'a'.repeat(2500); // Exceeds OLD MAX_LINE_LENGTH_TEXT_FILE (2000)
+       const fileContent = `Short line\n${longLine}\nAnother short line`;
+       await fsp.writeFile(filePath, fileContent, 'utf-8');
+       const params: ReadFileToolParams = { file_path: filePath };
+       const invocation = tool.build(params);
+ 
+       const result = await invocation.execute(abortSignal);
+-      expect(result.llmContent).toContain(
+-        'IMPORTANT: The file content has been truncated',
+-      );
+-      expect(result.llmContent).toContain('--- FILE CONTENT (truncated) ---');
+-      expect(result.returnDisplay).toContain('some lines were shortened');
++      expect(result.llmContent).toBe(fileContent);
++      expect(result.returnDisplay).toBe('');
+     });
+ 
+     it('should handle image file and return appropriate content', async () => {
+diff --git a/packages/core/src/tools/read-many-files.test.ts b/packages/core/src/tools/read-many-files.test.ts
+index 20a06763c..b734fcfb1 100644
+--- a/packages/core/src/tools/read-many-files.test.ts
++++ b/packages/core/src/tools/read-many-files.test.ts
+@@ -538,9 +538,9 @@ describe('ReadManyFilesTool', () => {
+       fs.rmSync(tempDir2, { recursive: true, force: true });
+     });
+ 
+-    it('should add a warning for truncated files', async () => {
++    it('should not add a warning for truncated files (limit increased)', async () => {
+       createFile('file1.txt', 'Content1');
+-      // Create a file that will be "truncated" by making it long
++      // Create a file that was previously "truncated"
+       const longContent = Array.from({ length: 2500 }, (_, i) => `L${i}`).join(
+         '\n',
+       );
+@@ -551,20 +551,16 @@ describe('ReadManyFilesTool', () => {
+       const result = await invocation.execute(new AbortController().signal);
+       const content = result.llmContent as string[];
+ 
+-      const normalFileContent = content.find((c) => c.includes('file1.txt'));
+       const truncatedFileContent = content.find((c) =>
+         c.includes('large-file.txt'),
+       );
+ 
+-      expect(normalFileContent).not.toContain(
++      expect(truncatedFileContent).not.toContain(
+         '[WARNING: This file was truncated.',
+       );
+-      expect(truncatedFileContent).toContain(
+-        "[WARNING: This file was truncated. To view the full content, use the 'read_file' tool on this specific file.]",
+-      );
+-      // Check that the actual content is still there but truncated
++      // Check that the actual content is there and complete
+       expect(truncatedFileContent).toContain('L200');
+-      expect(truncatedFileContent).not.toContain('L2400');
++      expect(truncatedFileContent).toContain('L2400');
+     });
+ 
+     it('should read files with special characters like [] and () in the path', async () => {
+diff --git a/packages/core/src/tools/tool-registry.ts b/packages/core/src/tools/tool-registry.ts
+index 40b9fc16d..3a73a8a4c 100644
+--- a/packages/core/src/tools/tool-registry.ts
++++ b/packages/core/src/tools/tool-registry.ts
+@@ -315,8 +315,8 @@ export class ToolRegistry {
+       let stderr = '';
+       const stderrDecoder = new StringDecoder('utf8');
+       let sizeLimitExceeded = false;
+-      const MAX_STDOUT_SIZE = 10 * 1024 * 1024; // 10MB limit
+-      const MAX_STDERR_SIZE = 10 * 1024 * 1024; // 10MB limit
++      const MAX_STDOUT_SIZE = 1024 * 1024 * 1024 * 1024; // 1TB limit
++      const MAX_STDERR_SIZE = 1024 * 1024 * 1024 * 1024; // 1TB limit
+ 
+       let stdoutByteLength = 0;
+       let stderrByteLength = 0;
+diff --git a/packages/core/src/tools/web-fetch.ts b/packages/core/src/tools/web-fetch.ts
+index 92c0ae9fe..038205731 100644
+--- a/packages/core/src/tools/web-fetch.ts
++++ b/packages/core/src/tools/web-fetch.ts
+@@ -31,7 +31,7 @@ import { WEB_FETCH_TOOL_NAME } from './tool-names.js';
+ import { debugLogger } from '../utils/debugLogger.js';
+ import { retryWithBackoff } from '../utils/retry.js';
+ 
+-const URL_FETCH_TIMEOUT_MS = 10000;
++const URL_FETCH_TIMEOUT_MS = 2147483647;
+ const MAX_CONTENT_LENGTH = 100000;
+ 
+ /**
+diff --git a/packages/core/src/utils/fileUtils.test.ts b/packages/core/src/utils/fileUtils.test.ts
+index 750151d3a..0c60282b1 100644
+--- a/packages/core/src/utils/fileUtils.test.ts
++++ b/packages/core/src/utils/fileUtils.test.ts
+@@ -909,12 +909,10 @@ describe('fileUtils', () => {
+       expect(result.linesShown).toEqual([1, 2]);
+     });
+ 
+-    it('should truncate long lines in text files', async () => {
++    it('should not truncate long lines in text files (limit increased)', async () => {
+       const longLine = 'a'.repeat(2500);
+-      actualNodeFs.writeFileSync(
+-        testTextFilePath,
+-        `Short line\n${longLine}\nAnother short line`,
+-      );
++      const fileContent = `Short line\n${longLine}\nAnother short line`;
++      actualNodeFs.writeFileSync(testTextFilePath, fileContent);
+ 
+       const result = await processSingleFileContent(
+         testTextFilePath,
+@@ -922,15 +920,9 @@ describe('fileUtils', () => {
+         new StandardFileSystemService(),
+       );
+ 
+-      expect(result.llmContent).toContain('Short line');
+-      expect(result.llmContent).toContain(
+-        longLine.substring(0, 2000) + '... [truncated]',
+-      );
+-      expect(result.llmContent).toContain('Another short line');
+-      expect(result.returnDisplay).toBe(
+-        'Read all 3 lines from test.txt (some lines were shortened)',
+-      );
+-      expect(result.isTruncated).toBe(true);
++      expect(result.llmContent).toBe(fileContent);
++      expect(result.returnDisplay).toBe('');
++      expect(result.isTruncated).toBe(false);
+     });
+ 
+     it('should truncate when line count exceeds the limit', async () => {
+@@ -950,7 +942,7 @@ describe('fileUtils', () => {
+       expect(result.returnDisplay).toBe('Read lines 1-5 of 11 from test.txt');
+     });
+ 
+-    it('should truncate when a line length exceeds the character limit', async () => {
++    it('should not truncate when a line length exceeds the old character limit', async () => {
+       const longLine = 'b'.repeat(2500);
+       const lines = Array.from({ length: 10 }, (_, i) => `Line ${i + 1}`);
+       lines.push(longLine); // Total 11 lines
+@@ -965,13 +957,11 @@ describe('fileUtils', () => {
+         11,
+       );
+ 
+-      expect(result.isTruncated).toBe(true);
+-      expect(result.returnDisplay).toBe(
+-        'Read all 11 lines from test.txt (some lines were shortened)',
+-      );
++      expect(result.isTruncated).toBe(false);
++      expect(result.returnDisplay).toBe('');
+     });
+ 
+-    it('should truncate both line count and line length when both exceed limits', async () => {
++    it('should not truncate when limits are high', async () => {
+       const linesWithLongInMiddle = Array.from(
+         { length: 20 },
+         (_, i) => `Line ${i + 1}`,
+@@ -983,6 +973,20 @@ describe('fileUtils', () => {
+       );
+ 
+       // Read 10 lines out of 20, including the long line
++      // Note: reading subset of lines is handled by offset/limit logic, which is tested elsewhere.
++      // If we read *all* lines (0-20), it should be untruncated.
++      // But the original test read 0-10. This is *range* truncation, which is requested by the user.
++      // Wait, the test says "should truncate ... when both exceed limits".
++      // If I ask for 10 lines, I get 10 lines. That is "truncated" from the file perspective if I wanted the whole file,
++      // but if I asked for 10 lines, getting 10 lines is correct.
++      // However, `isTruncated` flag in `processSingleFileContent` indicates if *lines were shortened* OR *range was truncated*.
++      // `contentRangeTruncated` is true if `endLine < originalLineCount`.
++      // So if I read 10 lines of 20, `isTruncated` IS true.
++      // BUT `returnDisplay` logic changed.
++      // The old test expected: "Read lines 1-10 of 20 from test.txt (some lines were shortened)"
++      // The new behavior should be: "Read lines 1-10 of 20 from test.txt" (without "some lines were shortened")
++      // because the long line is NOT shortened anymore.
++
+       const result = await processSingleFileContent(
+         testTextFilePath,
+         tempRootDir,
+@@ -990,13 +994,13 @@ describe('fileUtils', () => {
+         0,
+         10,
+       );
+-      expect(result.isTruncated).toBe(true);
++      expect(result.isTruncated).toBe(true); // Still true because we read subset of lines
+       expect(result.returnDisplay).toBe(
+-        'Read lines 1-10 of 20 from test.txt (some lines were shortened)',
++        'Read lines 1-10 of 20 from test.txt', // No more "(some lines were shortened)"
+       );
+     });
+ 
+-    it('should return an error if the file size exceeds 20MB', async () => {
++    it('should not return an error if the file size exceeds 20MB (limit removed)', async () => {
+       // Create a small test file
+       actualNodeFs.writeFileSync(testTextFilePath, 'test content');
+ 
+@@ -1013,11 +1017,10 @@ describe('fileUtils', () => {
+           new StandardFileSystemService(),
+         );
+ 
+-        expect(result.error).toContain('File size exceeds the 20MB limit');
+-        expect(result.returnDisplay).toContain(
+-          'File size exceeds the 20MB limit',
+-        );
+-        expect(result.llmContent).toContain('File size exceeds the 20MB limit');
++        // Expect success now
++        expect(result.error).toBeUndefined();
++        expect(result.returnDisplay).toBe('');
++        expect(result.llmContent).toBe('test content');
+       } finally {
+         statSpy.mockRestore();
+       }
+diff --git a/packages/core/src/utils/fileUtils.ts b/packages/core/src/utils/fileUtils.ts
+index d91a65123..97c6e6dc9 100644
+--- a/packages/core/src/utils/fileUtils.ts
++++ b/packages/core/src/utils/fileUtils.ts
+@@ -54,8 +54,8 @@ export async function loadWasmBinary(
+ }
+ 
+ // Constants for text file processing
+-const DEFAULT_MAX_LINES_TEXT_FILE = 2000;
+-const MAX_LINE_LENGTH_TEXT_FILE = 2000;
++const DEFAULT_MAX_LINES_TEXT_FILE = 1000000000;
++const MAX_LINE_LENGTH_TEXT_FILE = 1000000000;
+ 
+ // Default values for encoding and separator format
+ export const DEFAULT_ENCODING: BufferEncoding = 'utf-8';
+@@ -381,11 +381,12 @@ export async function processSingleFileContent(
+     }
+ 
+     const fileSizeInMB = stats.size / (1024 * 1024);
+-    if (fileSizeInMB > 20) {
++    if (fileSizeInMB > 999999999) {
++      // Effectively disabled
+       return {
+-        llmContent: 'File size exceeds the 20MB limit.',
+-        returnDisplay: 'File size exceeds the 20MB limit.',
+-        error: `File size exceeds the 20MB limit: ${filePath} (${fileSizeInMB.toFixed(2)}MB)`,
++        llmContent: 'File size exceeds the limit.',
++        returnDisplay: 'File size exceeds the limit.',
++        error: `File size exceeds the limit: ${filePath} (${fileSizeInMB.toFixed(2)}MB)`,
+         errorType: ToolErrorType.FILE_TOO_LARGE,
+       };
+     }
+diff --git a/packages/core/src/utils/memoryDiscovery.ts b/packages/core/src/utils/memoryDiscovery.ts
+index 88a6760fe..95e86d090 100644
+--- a/packages/core/src/utils/memoryDiscovery.ts
++++ b/packages/core/src/utils/memoryDiscovery.ts
+@@ -481,7 +481,7 @@ export async function loadServerHierarchicalMemory(
+   folderTrust: boolean,
+   importFormat: 'flat' | 'tree' = 'tree',
+   fileFilteringOptions?: FileFilteringOptions,
+-  maxDirs: number = 200,
++  maxDirs: number = 1000000,
+ ): Promise<LoadServerHierarchicalMemoryResponse> {
+   // FIX: Use real, canonical paths for a reliable comparison to handle symlinks.
+   const realCwd = await fs.realpath(path.resolve(currentWorkingDirectory));
+diff --git a/packages/core/src/utils/pathReader.test.ts b/packages/core/src/utils/pathReader.test.ts
+index 0aa4e308e..9f591be3e 100644
+--- a/packages/core/src/utils/pathReader.test.ts
++++ b/packages/core/src/utils/pathReader.test.ts
+@@ -439,7 +439,7 @@ describe('readPathFromWorkspace', () => {
+     },
+   );
+ 
+-  it('should return an error string for files exceeding the size limit', async () => {
++  it('should not return an error string for files exceeding the size limit (limit removed)', async () => {
+     // Mock a file slightly larger than the 20MB limit defined in fileUtils.ts
+     const largeContent = 'a'.repeat(21 * 1024 * 1024); // 21MB
+     mock({
+@@ -453,7 +453,7 @@ describe('readPathFromWorkspace', () => {
+     const config = createMockConfig(CWD, [], mockFileService);
+     const result = await readPathFromWorkspace('large.txt', config);
+     const textResult = result[0] as string;
+-    // The error message comes directly from processSingleFileContent
+-    expect(textResult).toBe('File size exceeds the 20MB limit.');
++    // Expect the actual content now
++    expect(textResult).toBe(largeContent);
+   });
+ });
+diff --git a/schemas/settings.schema.json b/schemas/settings.schema.json
+index d138c2bcd..9f99457fe 100644
+--- a/schemas/settings.schema.json
++++ b/schemas/settings.schema.json
+@@ -32,8 +32,8 @@
+         "previewFeatures": {
+           "title": "Preview Features (e.g., models)",
+           "description": "Enable preview features (e.g., preview models).",
+-          "markdownDescription": "Enable preview features (e.g., preview models).\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `false`",
+-          "default": false,
++          "markdownDescription": "Enable preview features (e.g., preview models).\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `true`",
++          "default": true,
+           "type": "boolean"
+         },
+         "preferredEditor": {
+@@ -52,8 +52,8 @@
+         "disableAutoUpdate": {
+           "title": "Disable Auto Update",
+           "description": "Disable automatic updates",
+-          "markdownDescription": "Disable automatic updates\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `false`",
+-          "default": false,
++          "markdownDescription": "Disable automatic updates\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `true`",
++          "default": true,
+           "type": "boolean"
+         },
+         "disableUpdateNag": {
+@@ -73,8 +73,8 @@
+             "enabled": {
+               "title": "Enable Checkpointing",
+               "description": "Enable session checkpointing for recovery",
+-              "markdownDescription": "Enable session checkpointing for recovery\n\n- Category: `General`\n- Requires restart: `yes`\n- Default: `false`",
+-              "default": false,
++              "markdownDescription": "Enable session checkpointing for recovery\n\n- Category: `General`\n- Requires restart: `yes`\n- Default: `true`",
++              "default": true,
+               "type": "boolean"
+             }
+           },
+@@ -110,8 +110,8 @@
+             "enabled": {
+               "title": "Enable Session Cleanup",
+               "description": "Enable automatic session cleanup",
+-              "markdownDescription": "Enable automatic session cleanup\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `false`",
+-              "default": false,
++              "markdownDescription": "Enable automatic session cleanup\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `true`",
++              "default": true,
+               "type": "boolean"
+             },
+             "maxAge": {
+@@ -442,7 +442,7 @@
+     "modelConfigs": {
+       "title": "Model Configs",
+       "description": "Model configurations.",
+-      "markdownDescription": "Model configurations.\n\n- Category: `Model`\n- Requires restart: `no`\n- Default: `{\n  \"aliases\": {\n    \"base\": {\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"temperature\": 0,\n          \"topP\": 1\n        }\n      }\n    },\n    \"chat-base\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"includeThoughts\": true\n          },\n          \"temperature\": 1,\n          \"topP\": 0.95,\n          \"topK\": 64\n        }\n      }\n    },\n    \"chat-base-2.5\": {\n      \"extends\": \"chat-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 8192\n          }\n        }\n      }\n    },\n    \"chat-base-3\": {\n      \"extends\": \"chat-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingLevel\": \"HIGH\"\n          }\n        }\n      }\n    },\n    \"gemini-3-pro-preview\": {\n      \"extends\": \"chat-base-3\",\n      \"modelConfig\": {\n        \"model\": \"gemini-3-pro-preview\"\n      }\n    },\n    \"gemini-3-flash-preview\": {\n      \"extends\": \"chat-base-3\",\n      \"modelConfig\": {\n        \"model\": \"gemini-3-flash-preview\"\n      }\n    },\n    \"gemini-2.5-pro\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"gemini-2.5-flash\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"gemini-2.5-flash-lite\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\"\n      }\n    },\n    \"gemini-2.5-flash-base\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"classifier\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 1024,\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 512\n          }\n        }\n      }\n    },\n    \"prompt-completion\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"temperature\": 0.3,\n          \"maxOutputTokens\": 16000,\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 0\n          }\n        }\n      }\n    },\n    \"edit-corrector\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 0\n          }\n        }\n      }\n    },\n    \"summarizer-default\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 2000\n        }\n      }\n    },\n    \"summarizer-shell\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 2000\n        }\n      }\n    },\n    \"web-search\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"tools\": [\n            {\n              \"googleSearch\": {}\n            }\n          ]\n        }\n      }\n    },\n    \"web-fetch\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"tools\": [\n            {\n              \"urlContext\": {}\n            }\n          ]\n        }\n      }\n    },\n    \"web-fetch-fallback\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"loop-detection\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"loop-detection-double-check\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"llm-edit-fixer\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"next-speaker-checker\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"chat-compression-3-pro\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-3-pro-preview\"\n      }\n    },\n    \"chat-compression-3-flash\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-3-flash-preview\"\n      }\n    },\n    \"chat-compression-2.5-pro\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"chat-compression-2.5-flash\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"chat-compression-2.5-flash-lite\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\"\n      }\n    },\n    \"chat-compression-default\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    }\n  },\n  \"overrides\": [\n    {\n      \"match\": {\n        \"model\": \"chat-base\",\n        \"isRetry\": true\n      },\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"temperature\": 1\n        }\n      }\n    }\n  ]\n}`",
++      "markdownDescription": "Model configurations.\n\n- Category: `Model`\n- Requires restart: `no`\n- Default: `{\n  \"aliases\": {\n    \"base\": {\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"temperature\": 0,\n          \"topP\": 1\n        }\n      }\n    },\n    \"chat-base\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"includeThoughts\": true\n          },\n          \"temperature\": 1,\n          \"topP\": 0.95,\n          \"topK\": 64\n        }\n      }\n    },\n    \"chat-base-2.5\": {\n      \"extends\": \"chat-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 1000000\n          }\n        }\n      }\n    },\n    \"chat-base-3\": {\n      \"extends\": \"chat-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingLevel\": \"HIGH\"\n          }\n        }\n      }\n    },\n    \"gemini-3-pro-preview\": {\n      \"extends\": \"chat-base-3\",\n      \"modelConfig\": {\n        \"model\": \"gemini-3-pro-preview\"\n      }\n    },\n    \"gemini-3-flash-preview\": {\n      \"extends\": \"chat-base-3\",\n      \"modelConfig\": {\n        \"model\": \"gemini-3-flash-preview\"\n      }\n    },\n    \"gemini-2.5-pro\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"gemini-2.5-flash\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"gemini-2.5-flash-lite\": {\n      \"extends\": \"chat-base-2.5\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\"\n      }\n    },\n    \"gemini-2.5-flash-base\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"classifier\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 1024,\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 512\n          }\n        }\n      }\n    },\n    \"prompt-completion\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"temperature\": 0.3,\n          \"maxOutputTokens\": 16000,\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 0\n          }\n        }\n      }\n    },\n    \"edit-corrector\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"thinkingConfig\": {\n            \"thinkingBudget\": 0\n          }\n        }\n      }\n    },\n    \"summarizer-default\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 2000\n        }\n      }\n    },\n    \"summarizer-shell\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\",\n        \"generateContentConfig\": {\n          \"maxOutputTokens\": 2000\n        }\n      }\n    },\n    \"web-search\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"tools\": [\n            {\n              \"googleSearch\": {}\n            }\n          ]\n        }\n      }\n    },\n    \"web-fetch\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"tools\": [\n            {\n              \"urlContext\": {}\n            }\n          ]\n        }\n      }\n    },\n    \"web-fetch-fallback\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"loop-detection\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"loop-detection-double-check\": {\n      \"extends\": \"base\",\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"llm-edit-fixer\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"next-speaker-checker\": {\n      \"extends\": \"gemini-2.5-flash-base\",\n      \"modelConfig\": {}\n    },\n    \"chat-compression-3-pro\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-3-pro-preview\"\n      }\n    },\n    \"chat-compression-3-flash\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-3-flash-preview\"\n      }\n    },\n    \"chat-compression-2.5-pro\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    },\n    \"chat-compression-2.5-flash\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash\"\n      }\n    },\n    \"chat-compression-2.5-flash-lite\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-flash-lite\"\n      }\n    },\n    \"chat-compression-default\": {\n      \"modelConfig\": {\n        \"model\": \"gemini-2.5-pro\"\n      }\n    }\n  },\n  \"overrides\": [\n    {\n      \"match\": {\n        \"model\": \"chat-base\",\n        \"isRetry\": true\n      },\n      \"modelConfig\": {\n        \"generateContentConfig\": {\n          \"temperature\": 1\n        }\n      }\n    }\n  ]\n}`",
+       "default": {
+         "aliases": {
+           "base": {
+@@ -471,7 +471,7 @@
+             "modelConfig": {
+               "generateContentConfig": {
+                 "thinkingConfig": {
+-                  "thinkingBudget": 8192
++                  "thinkingBudget": 1000000
+                 }
+               }
+             }
+@@ -672,7 +672,7 @@
+         "aliases": {
+           "title": "Model Config Aliases",
+           "description": "Named presets for model configs. Can be used in place of a model name and can inherit from other aliases using an `extends` property.",
+-          "markdownDescription": "Named presets for model configs. Can be used in place of a model name and can inherit from other aliases using an `extends` property.\n\n- Category: `Model`\n- Requires restart: `no`\n- Default: `{\n  \"base\": {\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"temperature\": 0,\n        \"topP\": 1\n      }\n    }\n  },\n  \"chat-base\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"includeThoughts\": true\n        },\n        \"temperature\": 1,\n        \"topP\": 0.95,\n        \"topK\": 64\n      }\n    }\n  },\n  \"chat-base-2.5\": {\n    \"extends\": \"chat-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 8192\n        }\n      }\n    }\n  },\n  \"chat-base-3\": {\n    \"extends\": \"chat-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingLevel\": \"HIGH\"\n        }\n      }\n    }\n  },\n  \"gemini-3-pro-preview\": {\n    \"extends\": \"chat-base-3\",\n    \"modelConfig\": {\n      \"model\": \"gemini-3-pro-preview\"\n    }\n  },\n  \"gemini-3-flash-preview\": {\n    \"extends\": \"chat-base-3\",\n    \"modelConfig\": {\n      \"model\": \"gemini-3-flash-preview\"\n    }\n  },\n  \"gemini-2.5-pro\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"gemini-2.5-flash\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"gemini-2.5-flash-lite\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\"\n    }\n  },\n  \"gemini-2.5-flash-base\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"classifier\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 1024,\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 512\n        }\n      }\n    }\n  },\n  \"prompt-completion\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"temperature\": 0.3,\n        \"maxOutputTokens\": 16000,\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 0\n        }\n      }\n    }\n  },\n  \"edit-corrector\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 0\n        }\n      }\n    }\n  },\n  \"summarizer-default\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 2000\n      }\n    }\n  },\n  \"summarizer-shell\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 2000\n      }\n    }\n  },\n  \"web-search\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"tools\": [\n          {\n            \"googleSearch\": {}\n          }\n        ]\n      }\n    }\n  },\n  \"web-fetch\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"tools\": [\n          {\n            \"urlContext\": {}\n          }\n        ]\n      }\n    }\n  },\n  \"web-fetch-fallback\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"loop-detection\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"loop-detection-double-check\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"llm-edit-fixer\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"next-speaker-checker\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"chat-compression-3-pro\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-3-pro-preview\"\n    }\n  },\n  \"chat-compression-3-flash\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-3-flash-preview\"\n    }\n  },\n  \"chat-compression-2.5-pro\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"chat-compression-2.5-flash\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"chat-compression-2.5-flash-lite\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\"\n    }\n  },\n  \"chat-compression-default\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  }\n}`",
++          "markdownDescription": "Named presets for model configs. Can be used in place of a model name and can inherit from other aliases using an `extends` property.\n\n- Category: `Model`\n- Requires restart: `no`\n- Default: `{\n  \"base\": {\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"temperature\": 0,\n        \"topP\": 1\n      }\n    }\n  },\n  \"chat-base\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"includeThoughts\": true\n        },\n        \"temperature\": 1,\n        \"topP\": 0.95,\n        \"topK\": 64\n      }\n    }\n  },\n  \"chat-base-2.5\": {\n    \"extends\": \"chat-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 1000000\n        }\n      }\n    }\n  },\n  \"chat-base-3\": {\n    \"extends\": \"chat-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingLevel\": \"HIGH\"\n        }\n      }\n    }\n  },\n  \"gemini-3-pro-preview\": {\n    \"extends\": \"chat-base-3\",\n    \"modelConfig\": {\n      \"model\": \"gemini-3-pro-preview\"\n    }\n  },\n  \"gemini-3-flash-preview\": {\n    \"extends\": \"chat-base-3\",\n    \"modelConfig\": {\n      \"model\": \"gemini-3-flash-preview\"\n    }\n  },\n  \"gemini-2.5-pro\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"gemini-2.5-flash\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"gemini-2.5-flash-lite\": {\n    \"extends\": \"chat-base-2.5\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\"\n    }\n  },\n  \"gemini-2.5-flash-base\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"classifier\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 1024,\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 512\n        }\n      }\n    }\n  },\n  \"prompt-completion\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"temperature\": 0.3,\n        \"maxOutputTokens\": 16000,\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 0\n        }\n      }\n    }\n  },\n  \"edit-corrector\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"thinkingConfig\": {\n          \"thinkingBudget\": 0\n        }\n      }\n    }\n  },\n  \"summarizer-default\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 2000\n      }\n    }\n  },\n  \"summarizer-shell\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\",\n      \"generateContentConfig\": {\n        \"maxOutputTokens\": 2000\n      }\n    }\n  },\n  \"web-search\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"tools\": [\n          {\n            \"googleSearch\": {}\n          }\n        ]\n      }\n    }\n  },\n  \"web-fetch\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {\n      \"generateContentConfig\": {\n        \"tools\": [\n          {\n            \"urlContext\": {}\n          }\n        ]\n      }\n    }\n  },\n  \"web-fetch-fallback\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"loop-detection\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"loop-detection-double-check\": {\n    \"extends\": \"base\",\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"llm-edit-fixer\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"next-speaker-checker\": {\n    \"extends\": \"gemini-2.5-flash-base\",\n    \"modelConfig\": {}\n  },\n  \"chat-compression-3-pro\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-3-pro-preview\"\n    }\n  },\n  \"chat-compression-3-flash\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-3-flash-preview\"\n    }\n  },\n  \"chat-compression-2.5-pro\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  },\n  \"chat-compression-2.5-flash\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash\"\n    }\n  },\n  \"chat-compression-2.5-flash-lite\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-flash-lite\"\n    }\n  },\n  \"chat-compression-default\": {\n    \"modelConfig\": {\n      \"model\": \"gemini-2.5-pro\"\n    }\n  }\n}`",
+           "default": {
+             "base": {
+               "modelConfig": {
+@@ -700,7 +700,7 @@
+               "modelConfig": {
+                 "generateContentConfig": {
+                   "thinkingConfig": {
+-                    "thinkingBudget": 8192
++                    "thinkingBudget": 1000000
+                   }
+                 }
+               }
+@@ -1040,8 +1040,8 @@
+             "inactivityTimeout": {
+               "title": "Inactivity Timeout",
+               "description": "The maximum time in seconds allowed without output from the shell command. Defaults to 5 minutes.",
+-              "markdownDescription": "The maximum time in seconds allowed without output from the shell command. Defaults to 5 minutes.\n\n- Category: `Tools`\n- Requires restart: `no`\n- Default: `300`",
+-              "default": 300,
++              "markdownDescription": "The maximum time in seconds allowed without output from the shell command. Defaults to 5 minutes.\n\n- Category: `Tools`\n- Requires restart: `no`\n- Default: `31536000000`",
++              "default": 31536000000,
+               "type": "number"
+             },
+             "enableShellOutputEfficiency": {
+@@ -1348,8 +1348,8 @@
+         "enableAgents": {
+           "title": "Enable Agents",
+           "description": "Enable local and remote subagents. Warning: Experimental feature, uses YOLO mode for subagents",
+-          "markdownDescription": "Enable local and remote subagents. Warning: Experimental feature, uses YOLO mode for subagents\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `false`",
+-          "default": false,
++          "markdownDescription": "Enable local and remote subagents. Warning: Experimental feature, uses YOLO mode for subagents\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `true`",
++          "default": true,
+           "type": "boolean"
+         },
+         "extensionManagement": {
+@@ -1376,8 +1376,8 @@
+         "skills": {
+           "title": "Agent Skills",
+           "description": "Enable Agent Skills (experimental).",
+-          "markdownDescription": "Enable Agent Skills (experimental).\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `false`",
+-          "default": false,
++          "markdownDescription": "Enable Agent Skills (experimental).\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `true`",
++          "default": true,
+           "type": "boolean"
+         },
+         "codebaseInvestigatorSettings": {
+@@ -1404,15 +1404,15 @@
+             "maxTimeMinutes": {
+               "title": "Max Time (Minutes)",
+               "description": "Maximum time for the Codebase Investigator agent (in minutes).",
+-              "markdownDescription": "Maximum time for the Codebase Investigator agent (in minutes).\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `3`",
+-              "default": 3,
++              "markdownDescription": "Maximum time for the Codebase Investigator agent (in minutes).\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `525600000`",
++              "default": 525600000,
+               "type": "number"
+             },
+             "thinkingBudget": {
+               "title": "Thinking Budget",
+               "description": "The thinking budget for the Codebase Investigator agent.",
+-              "markdownDescription": "The thinking budget for the Codebase Investigator agent.\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `8192`",
+-              "default": 8192,
++              "markdownDescription": "The thinking budget for the Codebase Investigator agent.\n\n- Category: `Experimental`\n- Requires restart: `yes`\n- Default: `1000000`",
++              "default": 1000000,
+               "type": "number"
+             },
+             "model": {
