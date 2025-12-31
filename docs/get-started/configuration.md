@@ -100,7 +100,7 @@ their corresponding top-level category object in your `settings.json` file.
 
 - **`general.previewFeatures`** (boolean):
   - **Description:** Enable preview features (e.g., preview models).
-  - **Default:** `false`
+  - **Default:** `true`
 
 - **`general.preferredEditor`** (string):
   - **Description:** The preferred editor to open files in.
@@ -112,7 +112,7 @@ their corresponding top-level category object in your `settings.json` file.
 
 - **`general.disableAutoUpdate`** (boolean):
   - **Description:** Disable automatic updates
-  - **Default:** `false`
+  - **Default:** `true`
 
 - **`general.disableUpdateNag`** (boolean):
   - **Description:** Disable update notification prompts.
@@ -120,7 +120,7 @@ their corresponding top-level category object in your `settings.json` file.
 
 - **`general.checkpointing.enabled`** (boolean):
   - **Description:** Enable session checkpointing for recovery
-  - **Default:** `false`
+  - **Default:** `true`
   - **Requires restart:** Yes
 
 - **`general.enablePromptCompletion`** (boolean):
@@ -140,7 +140,7 @@ their corresponding top-level category object in your `settings.json` file.
 
 - **`general.sessionRetention.enabled`** (boolean):
   - **Description:** Enable automatic session cleanup
-  - **Default:** `false`
+  - **Default:** `true`
 
 - **`general.sessionRetention.maxAge`** (string):
   - **Description:** Maximum age of sessions to keep (e.g., "30d", "7d", "24h",
@@ -619,7 +619,7 @@ their corresponding top-level category object in your `settings.json` file.
 - **`tools.shell.inactivityTimeout`** (number):
   - **Description:** The maximum time in seconds allowed without output from the
     shell command. Defaults to 5 minutes.
-  - **Default:** `300`
+  - **Default:** `31536000000`
 
 - **`tools.shell.enableShellOutputEfficiency`** (boolean):
   - **Description:** Enable shell output efficiency optimizations for better
@@ -804,7 +804,7 @@ their corresponding top-level category object in your `settings.json` file.
 - **`experimental.enableAgents`** (boolean):
   - **Description:** Enable local and remote subagents. Warning: Experimental
     feature, uses YOLO mode for subagents
-  - **Default:** `false`
+  - **Default:** `true`
   - **Requires restart:** Yes
 
 - **`experimental.extensionManagement`** (boolean):
@@ -824,7 +824,7 @@ their corresponding top-level category object in your `settings.json` file.
 
 - **`experimental.skills`** (boolean):
   - **Description:** Enable Agent Skills (experimental).
-  - **Default:** `false`
+  - **Default:** `true`
   - **Requires restart:** Yes
 
 - **`experimental.codebaseInvestigatorSettings.enabled`** (boolean):
@@ -841,12 +841,12 @@ their corresponding top-level category object in your `settings.json` file.
 - **`experimental.codebaseInvestigatorSettings.maxTimeMinutes`** (number):
   - **Description:** Maximum time for the Codebase Investigator agent (in
     minutes).
-  - **Default:** `3`
+  - **Default:** `525600000`
   - **Requires restart:** Yes
 
 - **`experimental.codebaseInvestigatorSettings.thinkingBudget`** (number):
   - **Description:** The thinking budget for the Codebase Investigator agent.
-  - **Default:** `8192`
+  - **Default:** `1000000`
   - **Requires restart:** Yes
 
 - **`experimental.codebaseInvestigatorSettings.model`** (string):

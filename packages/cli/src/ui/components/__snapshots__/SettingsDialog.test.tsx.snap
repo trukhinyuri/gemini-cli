@@ -10,17 +10,17 @@ exports[`SettingsDialog > Initial Rendering > should render settings list with v
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -48,17 +48,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'accessibility settings
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             true*                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -86,7 +86,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false*                                   │
 │                                                                                                  │
@@ -96,7 +96,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
 │                                                                                                  │
 │    Debug Keystroke Logging                              false*                                   │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -124,17 +124,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'default state' correct
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -162,17 +162,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'file filtering setting
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -200,17 +200,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'focused on scope selec
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│    Preview Features (e.g., models)                      false                                    │
+│    Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -238,7 +238,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false*                                   │
 │                                                                                                  │
@@ -248,7 +248,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -276,17 +276,17 @@ exports[`SettingsDialog > Snapshot Tests > should render 'tools and security set
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             false                                    │
 │                                                                                                  │
-│    Disable Auto Update                                  false                                    │
+│    Disable Auto Update                                  true                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                             false                                    │
 │                                                                                                  │
 │    Debug Keystroke Logging                              false                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
@@ -314,7 +314,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                      false                                    │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)   true                           │
 │                                                                                                  │
 │    Vim Mode                                             true*                                    │
 │                                                                                                  │
@@ -324,7 +324,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
 │                                                                                                  │
 │    Debug Keystroke Logging                              true*                                    │
 │                                                                                                  │
-│    Enable Session Cleanup                               false                                    │
+│    Enable Session Cleanup (Modified in SystemDefaults)   true                                    │
 │                                                                                                  │
 │    Output Format                                        Text                                     │
 │                                                                                                  │
