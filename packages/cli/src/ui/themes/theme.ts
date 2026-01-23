@@ -100,7 +100,7 @@ export const lightTheme: ColorsTheme = {
   Comment: '#008000',
   Gray: '#97a0b0',
   DarkGray: interpolateColor('#97a0b0', '#FAFAFA', 0.5),
-  GradientColors: ['#4796E4', '#847ACE', '#C3677F'],
+  GradientColors: ['#0D47A1', '#1976D2', '#42A5F5'],
 };
 
 export const darkTheme: ColorsTheme = {
@@ -119,7 +119,7 @@ export const darkTheme: ColorsTheme = {
   Comment: '#6C7086',
   Gray: '#6C7086',
   DarkGray: interpolateColor('#6C7086', '#1E1E2E', 0.5),
-  GradientColors: ['#4796E4', '#847ACE', '#C3677F'],
+  GradientColors: ['#0D47A1', '#1976D2', '#42A5F5'],
 };
 
 export const ansiTheme: ColorsTheme = {
