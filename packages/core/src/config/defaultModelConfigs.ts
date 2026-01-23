@@ -101,9 +101,9 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
       modelConfig: {
         model: 'gemini-2.5-flash-lite',
         generateContentConfig: {
-          maxOutputTokens: 1024,
+          maxOutputTokens: 8192,
           thinkingConfig: {
-            thinkingBudget: 512,
+            thinkingBudget: DEFAULT_THINKING_MODE,
           },
         },
       },
@@ -114,9 +114,9 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
         model: 'gemini-2.5-flash-lite',
         generateContentConfig: {
           temperature: 0.3,
-          maxOutputTokens: 16000,
+          maxOutputTokens: 65536,
           thinkingConfig: {
-            thinkingBudget: 0,
+            thinkingBudget: DEFAULT_THINKING_MODE,
           },
         },
       },
@@ -127,7 +127,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
         model: 'gemini-2.5-flash-lite',
         generateContentConfig: {
           thinkingConfig: {
-            thinkingBudget: 0,
+            thinkingBudget: DEFAULT_THINKING_MODE,
           },
         },
       },
@@ -137,7 +137,10 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
       modelConfig: {
         model: 'gemini-2.5-flash-lite',
         generateContentConfig: {
-          maxOutputTokens: 2000,
+          maxOutputTokens: 65536,
+          thinkingConfig: {
+            thinkingBudget: DEFAULT_THINKING_MODE,
+          },
         },
       },
     },
@@ -146,7 +149,10 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
       modelConfig: {
         model: 'gemini-2.5-flash-lite',
         generateContentConfig: {
-          maxOutputTokens: 2000,
+          maxOutputTokens: 65536,
+          thinkingConfig: {
+            thinkingBudget: DEFAULT_THINKING_MODE,
+          },
         },
       },
     },

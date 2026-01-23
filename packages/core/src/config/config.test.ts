@@ -1128,15 +1128,15 @@ describe('Server Config (config.ts)', () => {
       expect(config.getTruncateToolOutputThreshold()).toBe(124000);
     });
 
-    it('should return the default threshold when the calculated value is larger', () => {
+    it('should return the calculated threshold when it is smaller than default', () => {
       const config = new Config(baseParams);
       vi.mocked(tokenLimit).mockReturnValue(2_000_000);
       vi.mocked(uiTelemetryService.getLastPromptTokenCount).mockReturnValue(
         500_000,
       );
       // 4 * (2_000_000 - 500_000) = 4 * 1_500_000 = 6_000_000
-      // default is 4_000_000
-      expect(config.getTruncateToolOutputThreshold()).toBe(4_000_000);
+      // default is 100_000_000, so calculated value is used
+      expect(config.getTruncateToolOutputThreshold()).toBe(6_000_000);
     });
 
     it('should use a custom truncateToolOutputThreshold if provided', () => {

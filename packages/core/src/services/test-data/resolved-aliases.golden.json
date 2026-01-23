@@ -109,9 +109,9 @@
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 1024,
+      "maxOutputTokens": 8192,
       "thinkingConfig": {
-        "thinkingBudget": 512
+        "thinkingBudget": 1000000
       }
     }
   },
@@ -120,9 +120,9 @@
     "generateContentConfig": {
       "temperature": 0.3,
       "topP": 1,
-      "maxOutputTokens": 16000,
+      "maxOutputTokens": 65536,
       "thinkingConfig": {
-        "thinkingBudget": 0
+        "thinkingBudget": 1000000
       }
     }
   },
@@ -132,7 +132,7 @@
       "temperature": 0,
       "topP": 1,
       "thinkingConfig": {
-        "thinkingBudget": 0
+        "thinkingBudget": 1000000
       }
     }
   },
@@ -141,7 +141,10 @@
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 2000
+      "maxOutputTokens": 65536,
+      "thinkingConfig": {
+        "thinkingBudget": 1000000
+      }
     }
   },
   "summarizer-shell": {
@@ -149,7 +152,10 @@
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 2000
+      "maxOutputTokens": 65536,
+      "thinkingConfig": {
+        "thinkingBudget": 1000000
+      }
     }
   },
   "web-search": {

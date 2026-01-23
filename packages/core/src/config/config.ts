@@ -225,8 +225,9 @@ export {
   DEFAULT_MEMORY_FILE_FILTERING_OPTIONS,
 };
 
-export const DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD = 4_000_000;
-export const DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES = 1000;
+// Increased limits for maximum quality output
+export const DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD = 100_000_000;
+export const DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES = 100000;
 
 export class MCPServerConfig {
   constructor(
