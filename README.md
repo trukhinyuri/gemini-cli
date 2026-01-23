@@ -52,6 +52,18 @@ responses and don't mind using more tokens, this fork is for you.
   context
 - **🎯 Quality Over Economy**: Prioritizes response quality over token savings
 
+### Installation via npm:
+
+```bash
+npm install -g @trukhinyuri/gemini-pp
+```
+
+After installation, run:
+
+```bash
+gemini-pp
+```
+
 ### Installation (from source):
 
 ```bash
