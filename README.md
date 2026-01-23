@@ -111,12 +111,6 @@ npx @google/gemini-cli
 npm install -g @google/gemini-cli
 ```
 
-#### Install globally with Homebrew (macOS/Linux)
-
-```bash
-brew install gemini-cli
-```
-
 ## Release Cadence and Tags
 
 See [Releases](./docs/releases.md) for more details.
