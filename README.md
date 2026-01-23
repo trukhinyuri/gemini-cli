@@ -1,4 +1,4 @@
-# Gemini CLI
+# Gemini CLI (Optimized Fork)
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
 [![Gemini CLI E2E (Chained)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml)
@@ -8,20 +8,70 @@
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
+> ** This is an optimized fork of
+> [Google's Gemini CLI](https://github.com/google-gemini/gemini-cli)**
+>
+> **Patches by: Yuri Trukhin <yuri@trukhin.com>**
+
 Gemini CLI is an open-source AI agent that brings the power of Gemini directly
 into your terminal. It provides lightweight access to Gemini, giving you the
 most direct path from your prompt to our model.
 
 Learn all about Gemini CLI in our [documentation](https://geminicli.com/docs/).
 
+---
+
+## What's Different in This Fork?
+
+This fork removes artificial limitations and optimizes Gemini CLI for **maximum
+quality reasoning** instead of token economy. If you want the smartest possible
+responses and don't mind using more tokens, this fork is for you.
+
+### Key Optimizations:
+
+| Feature                                   | Original        | This Fork         |
+| ----------------------------------------- | --------------- | ----------------- |
+| **Thinking Budget (classifier)**          | 512 tokens      | 1,000,000 tokens  |
+| **Thinking Budget (prompt-completion)**   | Disabled (0)    | 1,000,000 tokens  |
+| **Thinking Budget (edit-corrector)**      | Disabled (0)    | 1,000,000 tokens  |
+| **Max Output Tokens (summarizers)**       | 2,000 tokens    | 65,536 tokens     |
+| **Max Output Tokens (prompt-completion)** | 16,000 tokens   | 65,536 tokens     |
+| **Max Output Tokens (classifier)**        | 1,024 tokens    | 8,192 tokens      |
+| **Tool Output Truncation Threshold**      | 4,000,000 chars | 100,000,000 chars |
+| **Tool Output Max Lines**                 | 1,000 lines     | 100,000 lines     |
+
+### Why These Changes Matter:
+
+- ** Extended Thinking**: All model roles now have access to the full thinking
+  budget (1M tokens), enabling deeper reasoning and more thorough problem
+  analysis
+- ** Longer Outputs**: Summarizers and completions can now produce much longer,
+  more detailed responses without truncation
+- ** Full Tool Output**: Tool outputs (like file contents, command results) are
+  preserved in full instead of being truncated, giving the model complete
+  context
+- **🎯 Quality Over Economy**: Prioritizes response quality over token savings
+
+### Installation (from source):
+
+```bash
+git clone https://github.com/trukhinyuri/gemini-cli.git
+cd gemini-cli
+npm install
+npm run build
+node packages/cli/dist/index.js
+```
+
+---
+
 ## 🚀 Why Gemini CLI?
 
 - **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
   account.
-- **🧠 Powerful Gemini 3 models**: Access to improved reasoning and 1M token
+- ** Powerful Gemini 3 models**: Access to improved reasoning and 1M token
   context window.
-- **🔧 Built-in tools**: Google Search grounding, file operations, shell
-  commands, web fetching.
+- ** Built-in tools**: Google Search grounding, file operations, shell commands,
+  web fetching.
 - **🔌 Extensible**: MCP (Model Context Protocol) support for custom
   integrations.
 - **💻 Terminal-first**: Designed for developers who live in the command line.
