@@ -1,6 +1,6 @@
 {
   "name": "@trukhinyuri/gemini-pp",
-  "version": "0.27.0-nightly.20260121.97aac696f",
+  "version": "0.27.0",
   "description": "Gemini CLI",
   "license": "Apache-2.0",
   "repository": {
