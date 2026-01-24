@@ -1999,8 +1999,8 @@ describe('GeminiChat', () => {
       // Second function call does NOT
       expect(newContents[3]?.parts?.[1]).not.toHaveProperty('thoughtSignature');
 
-      // User functionResponse part - unchanged (this is not a model turn)
-      expect(newContents[4]?.parts?.[0]).not.toHaveProperty('thoughtSignature');
+      // User functionResponse part - fork adds skip_thought_signature_validator
+      expect(newContents[4]?.parts?.[0]?.thoughtSignature).toBe('skip_thought_signature_validator');
 
       // Inside active loop, second model turn
       // First function call already has a signature, so nothing changes

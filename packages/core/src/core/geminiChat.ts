@@ -721,6 +721,7 @@ export class GeminiChat {
     // function call in each message's list of parts has a valid
     // thoughtSignature property. If it does not we replace the function call
     // with a copy that uses the synthetic thought signature.
+    // Also ensure function responses have the synthetic thought signature.
     const newContents = requestContents.slice(); // Shallow copy the array
     for (let i = activeLoopStartIndex; i < newContents.length; i++) {
       const content = newContents[i];
@@ -741,6 +742,26 @@ export class GeminiChat {
             }
             break; // Only consider the first function call
           }
+        }
+      } else if (content.role === 'user' && content.parts) {
+        // For user messages containing function responses, add thoughtSignature
+        const newParts = content.parts.slice();
+        let modified = false;
+        for (let j = 0; j < newParts.length; j++) {
+          const part = newParts[j];
+          if (part.functionResponse && !part.thoughtSignature) {
+            newParts[j] = {
+              ...part,
+              thoughtSignature: SYNTHETIC_THOUGHT_SIGNATURE,
+            };
+            modified = true;
+          }
+        }
+        if (modified) {
+          newContents[i] = {
+            ...content,
+            parts: newParts,
+          };
         }
       }
     }
