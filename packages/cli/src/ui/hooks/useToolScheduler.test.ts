@@ -82,6 +82,7 @@ const mockConfig = {
   isInteractive: () => false,
   getExperiments: () => {},
   getEnableHooks: () => false,
+  getWorkingDir: () => '/tmp/test-working-dir',
 } as unknown as Config;
 mockConfig.getMessageBus = vi.fn().mockReturnValue(createMockMessageBus());
 mockConfig.getHookSystem = vi.fn().mockReturnValue(new HookSystem(mockConfig));

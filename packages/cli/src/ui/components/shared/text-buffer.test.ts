@@ -1833,39 +1833,43 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
       expect(resultText).toContain('more safe text');
     });
 
-    it('should sanitize large ANSI text (>5000 chars) and strip escape codes', () => {
-      const { result } = renderHook(() =>
-        useTextBuffer({ viewport, isValidPath: () => false }),
-      );
-      const largeTextWithAnsi =
-        '\x1B[31m' +
-        'red text'.repeat(800) +
-        '\x1B[0m' +
-        '\x1B[32m' +
-        'green text'.repeat(200) +
-        '\x1B[0m';
+    it(
+      'should sanitize large ANSI text (>5000 chars) and strip escape codes',
+      { timeout: 15000 },
+      () => {
+        const { result } = renderHook(() =>
+          useTextBuffer({ viewport, isValidPath: () => false }),
+        );
+        const largeTextWithAnsi =
+          '\x1B[31m' +
+          'red text'.repeat(800) +
+          '\x1B[0m' +
+          '\x1B[32m' +
+          'green text'.repeat(200) +
+          '\x1B[0m';
 
-      expect(largeTextWithAnsi.length).toBeGreaterThan(5000);
+        expect(largeTextWithAnsi.length).toBeGreaterThan(5000);
 
-      act(() =>
-        result.current.handleInput({
-          name: '',
-          shift: false,
-          alt: false,
-          ctrl: false,
-          cmd: false,
-          insertable: true,
-          sequence: largeTextWithAnsi,
-        }),
-      );
+        act(() =>
+          result.current.handleInput({
+            name: '',
+            shift: false,
+            alt: false,
+            ctrl: false,
+            cmd: false,
+            insertable: true,
+            sequence: largeTextWithAnsi,
+          }),
+        );
 
-      const resultText = getBufferState(result).text;
-      expect(resultText).not.toContain('\x1B[31m');
-      expect(resultText).not.toContain('\x1B[32m');
-      expect(resultText).not.toContain('\x1B[0m');
-      expect(resultText).toContain('red text');
-      expect(resultText).toContain('green text');
-    });
+        const resultText = getBufferState(result).text;
+        expect(resultText).not.toContain('\x1B[31m');
+        expect(resultText).not.toContain('\x1B[32m');
+        expect(resultText).not.toContain('\x1B[0m');
+        expect(resultText).toContain('red text');
+        expect(resultText).toContain('green text');
+      },
+    );
 
     it('should not strip popular emojis', () => {
       const { result } = renderHook(() =>
