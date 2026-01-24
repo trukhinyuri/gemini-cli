@@ -75,11 +75,12 @@ describe('Agent Skills Backward Compatibility', () => {
         'test-session',
         await parseArguments(settings),
       );
+      // Fork behavior: skills are always enabled
       expect(
         (
           config as unknown as { isSkillsSupportEnabled: () => boolean }
         ).isSkillsSupportEnabled(),
-      ).toBe(false);
+      ).toBe(true);
     });
 
     it('should support legacy experimental.skills=true from settings', async () => {

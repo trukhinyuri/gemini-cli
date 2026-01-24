@@ -10,13 +10,13 @@ exports[`SettingsDialog > Initial Rendering > should render settings list with v
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               false  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -25,7 +25,7 @@ exports[`SettingsDialog > Initial Rendering > should render settings list with v
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -56,13 +56,13 @@ exports[`SettingsDialog > Snapshot Tests > should render 'accessibility settings
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               true*  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -71,7 +71,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'accessibility settings
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -102,7 +102,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                              false*  │
@@ -117,7 +117,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'all boolean settings d
 │    Debug Keystroke Logging                                                               false*  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -148,13 +148,13 @@ exports[`SettingsDialog > Snapshot Tests > should render 'default state' correct
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               false  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -163,7 +163,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'default state' correct
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -194,13 +194,13 @@ exports[`SettingsDialog > Snapshot Tests > should render 'file filtering setting
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               false  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -209,7 +209,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'file filtering setting
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -240,13 +240,13 @@ exports[`SettingsDialog > Snapshot Tests > should render 'focused on scope selec
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│    Preview Features (e.g., models)                                                        false  │
+│    Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               false  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -255,7 +255,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'focused on scope selec
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -286,7 +286,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                              false*  │
@@ -301,7 +301,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'mixed boolean and numb
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -332,13 +332,13 @@ exports[`SettingsDialog > Snapshot Tests > should render 'tools and security set
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               false  │
 │    Enable Vim keybindings                                                                        │
 │                                                                                                  │
-│    Enable Auto Update                                                                      true  │
+│    Enable Auto Update                                                                     false  │
 │    Enable automatic updates.                                                                     │
 │                                                                                                  │
 │    Enable Prompt Completion                                                               false  │
@@ -347,7 +347,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'tools and security set
 │    Debug Keystroke Logging                                                                false  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
@@ -378,7 +378,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
 │ ╰──────────────────────────────────────────────────────────────────────────────────────────────╯ │
 │                                                                                                  │
 │  ▲                                                                                               │
-│  ● Preview Features (e.g., models)                                                        false  │
+│  ● Preview Features (e.g., models) (Modified in SystemDefaults)                            true  │
 │    Enable preview features (e.g., preview models).                                               │
 │                                                                                                  │
 │    Vim Mode                                                                               true*  │
@@ -393,7 +393,7 @@ exports[`SettingsDialog > Snapshot Tests > should render 'various boolean settin
 │    Debug Keystroke Logging                                                                true*  │
 │    Enable debug logging of keystrokes to the console.                                            │
 │                                                                                                  │
-│    Enable Session Cleanup                                                                 false  │
+│    Enable Session Cleanup (Modified in SystemDefaults)                                     true  │
 │    Enable automatic session cleanup                                                              │
 │                                                                                                  │
 │    Output Format                                                                           Text  │
