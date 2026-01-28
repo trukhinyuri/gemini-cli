@@ -65,6 +65,7 @@ const mockConfig = {
   getSessionId: () => 'test-session-id',
   getUsageStatisticsEnabled: () => true,
   getDebugMode: () => false,
+
   storage: {
     getProjectTempDir: () => '/tmp',
   },
