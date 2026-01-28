@@ -2,13 +2,15 @@
   "base": {
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "chat-base": {
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true
       },
@@ -19,9 +21,10 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       },
       "topK": 64
     }
@@ -30,6 +33,7 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
         "thinkingLevel": "HIGH"
@@ -42,6 +46,7 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
         "thinkingLevel": "HIGH"
@@ -54,6 +59,7 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
         "thinkingLevel": "HIGH"
@@ -66,9 +72,10 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       },
       "topK": 64
     }
@@ -78,9 +85,10 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       },
       "topK": 64
     }
@@ -90,79 +98,83 @@
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
         "includeThoughts": true,
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       },
       "topK": 64
     }
   },
   "gemini-2.5-flash-base": {
-    "model": "gemini-2.5-flash",
-    "generateContentConfig": {
-      "temperature": 0,
-      "topP": 1
-    }
-  },
-  "classifier": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 8192,
+      "maxOutputTokens": 65535
+    }
+  },
+  "classifier": {
+    "model": "gemini-3-pro-preview",
+    "generateContentConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       }
     }
   },
   "prompt-completion": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0.3,
       "topP": 1,
-      "maxOutputTokens": 65536,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       }
     }
   },
   "edit-corrector": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       }
     }
   },
   "summarizer-default": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 65536,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       }
     }
   },
   "summarizer-shell": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
-      "maxOutputTokens": 65536,
+      "maxOutputTokens": 65535,
       "thinkingConfig": {
-        "thinkingBudget": 1000000
+        "thinkingBudget": 32768
       }
     }
   },
   "web-search": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
+      "maxOutputTokens": 65535,
       "tools": [
         {
           "googleSearch": {}
@@ -171,10 +183,11 @@
     }
   },
   "web-fetch": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
+      "maxOutputTokens": 65535,
       "tools": [
         {
           "urlContext": {}
@@ -183,38 +196,43 @@
     }
   },
   "web-fetch-fallback": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "loop-detection": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "loop-detection-double-check": {
-    "model": "gemini-2.5-pro",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "llm-edit-fixer": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "next-speaker-checker": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {
       "temperature": 0,
-      "topP": 1
+      "topP": 1,
+      "maxOutputTokens": 65535
     }
   },
   "chat-compression-3-pro": {
@@ -238,7 +256,7 @@
     "generateContentConfig": {}
   },
   "chat-compression-default": {
-    "model": "gemini-2.5-pro",
+    "model": "gemini-3-pro-preview",
     "generateContentConfig": {}
   }
 }

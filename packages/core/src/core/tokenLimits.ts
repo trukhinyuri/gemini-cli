@@ -15,7 +15,7 @@ import {
 type Model = string;
 type TokenCount = number;
 
-export const DEFAULT_TOKEN_LIMIT = 1048576;
+export const DEFAULT_TOKEN_LIMIT = 2097152;
 
 export function tokenLimit(model: Model): TokenCount {
   // Add other models as they become relevant or if specified by config
@@ -26,7 +26,7 @@ export function tokenLimit(model: Model): TokenCount {
     case DEFAULT_GEMINI_MODEL:
     case DEFAULT_GEMINI_FLASH_MODEL:
     case DEFAULT_GEMINI_FLASH_LITE_MODEL:
-      return 1_048_576;
+      return 2097152;
     default:
       return DEFAULT_TOKEN_LIMIT;
   }

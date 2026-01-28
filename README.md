@@ -20,34 +20,34 @@ Learn all about Gemini++ in our [documentation](https://geminicli.com/docs/).
 
 ## What's Different in This Fork?
 
-This fork removes artificial limitations and optimizes Gemini++ for **maximum
-quality reasoning** instead of token economy. If you want the smartest possible
-responses and don't mind using more tokens, this fork is for you.
+This fork defaults to **High-Performance / Unrestricted Mode**. It removes
+artificial limitations and optimizes Gemini++ for **maximum quality reasoning**,
+**deep context**, and **exhaustive output** instead of token economy.
+
+**⚠️ Note:** This configuration maximizes intelligence at the expense of higher
+API costs and latency.
 
 ### Key Optimizations:
 
-| Feature                                   | Original        | This Fork         |
-| ----------------------------------------- | --------------- | ----------------- |
-| **Thinking Budget (classifier)**          | 512 tokens      | 1,000,000 tokens  |
-| **Thinking Budget (prompt-completion)**   | Disabled (0)    | 1,000,000 tokens  |
-| **Thinking Budget (edit-corrector)**      | Disabled (0)    | 1,000,000 tokens  |
-| **Max Output Tokens (summarizers)**       | 2,000 tokens    | 65,536 tokens     |
-| **Max Output Tokens (prompt-completion)** | 16,000 tokens   | 65,536 tokens     |
-| **Max Output Tokens (classifier)**        | 1,024 tokens    | 8,192 tokens      |
-| **Tool Output Truncation Threshold**      | 4,000,000 chars | 100,000,000 chars |
-| **Tool Output Max Lines**                 | 1,000 lines     | 100,000 lines     |
+| Feature                              | Original        | This Fork (God Mode) |
+| ------------------------------------ | --------------- | -------------------- |
+| **Thinking Budget (All Models)**     | Varies          | **1,000,000 tokens** |
+| **Max Output Tokens (All Models)**   | 2k - 16k tokens | **1,000,000 tokens** |
+| **Context Window Limit**             | 1M tokens       | **2,097,152 tokens** |
+| **Tool Output Truncation Threshold** | 4M chars        | **100M chars**       |
+| **Tool Output Max Lines**            | 1,000 lines     | **100,000 lines**    |
+| **System Prompt Constraints**        | "Be concise"    | **"Be exhaustive"**  |
 
 ### Why These Changes Matter:
 
-- ** Extended Thinking**: All model roles now have access to the full thinking
-  budget (1M tokens), enabling deeper reasoning and more thorough problem
-  analysis
-- ** Longer Outputs**: Summarizers and completions can now produce much longer,
-  more detailed responses without truncation
-- ** Full Tool Output**: Tool outputs (like file contents, command results) are
-  preserved in full instead of being truncated, giving the model complete
-  context
-- **🎯 Quality Over Economy**: Prioritizes response quality over token savings
+- **🚀 Unbounded Reasoning**: All model roles (classifier, summarizer, chat) now
+  have access to massive thinking budgets and output limits.
+- **🧠 Deep Context**: The agent can read, process, and retain significantly
+  more information without summarization loss.
+- **🗣️ Comprehensive Output**: No more truncated responses or artificially short
+  answers. The agent prioritizes completeness and accuracy.
+- **🎯 Quality Over Economy**: Every setting is tuned for the best possible
+  result, regardless of token cost.
 
 ### Installation via npm:
 

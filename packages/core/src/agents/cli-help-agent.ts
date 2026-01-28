@@ -58,14 +58,14 @@ export const CliHelpAgent = (
       topP: 0.95,
       thinkingConfig: {
         includeThoughts: true,
-        thinkingBudget: -1,
+        thinkingBudget: 1000000,
       },
     },
   },
 
   runConfig: {
-    maxTimeMinutes: 3,
-    maxTurns: 10,
+    maxTimeMinutes: 10,
+    maxTurns: 100,
   },
 
   toolConfig: {

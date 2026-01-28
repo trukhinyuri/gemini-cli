@@ -18,6 +18,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
         generateContentConfig: {
           temperature: 0,
           topP: 1,
+          maxOutputTokens: 65535,
         },
       },
     },
@@ -93,15 +94,15 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'gemini-2.5-flash-base': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-pro-preview',
       },
     },
     classifier: {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-pro-preview',
         generateContentConfig: {
-          maxOutputTokens: 8192,
+          maxOutputTokens: 65535,
           thinkingConfig: {
             thinkingBudget: DEFAULT_THINKING_MODE,
           },
@@ -111,10 +112,10 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'prompt-completion': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-pro-preview',
         generateContentConfig: {
           temperature: 0.3,
-          maxOutputTokens: 65536,
+          maxOutputTokens: 65535,
           thinkingConfig: {
             thinkingBudget: DEFAULT_THINKING_MODE,
           },
@@ -124,7 +125,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'edit-corrector': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-pro-preview',
         generateContentConfig: {
           thinkingConfig: {
             thinkingBudget: DEFAULT_THINKING_MODE,
@@ -135,9 +136,9 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'summarizer-default': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-pro-preview',
         generateContentConfig: {
-          maxOutputTokens: 65536,
+          maxOutputTokens: 65535,
           thinkingConfig: {
             thinkingBudget: DEFAULT_THINKING_MODE,
           },
@@ -147,9 +148,9 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'summarizer-shell': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-pro-preview',
         generateContentConfig: {
-          maxOutputTokens: 65536,
+          maxOutputTokens: 65535,
           thinkingConfig: {
             thinkingBudget: DEFAULT_THINKING_MODE,
           },
@@ -184,7 +185,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'loop-detection-double-check': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-pro',
+        model: 'gemini-3-pro-preview',
       },
     },
     'llm-edit-fixer': {
@@ -222,7 +223,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     },
     'chat-compression-default': {
       modelConfig: {
-        model: 'gemini-2.5-pro',
+        model: 'gemini-3-pro-preview',
       },
     },
   },

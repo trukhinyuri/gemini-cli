@@ -64,6 +64,6 @@ export const GeneralistAgent = (
   },
   runConfig: {
     maxTimeMinutes: 10,
-    maxTurns: 20,
+    maxTurns: 100,
   },
 });

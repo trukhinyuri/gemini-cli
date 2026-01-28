@@ -29,8 +29,8 @@ export const GEMINI_MODEL_ALIAS_FLASH_LITE = 'flash-lite';
 
 export const DEFAULT_GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001';
 
-// Cap the thinking at a very high number to effectively remove limits.
-export const DEFAULT_THINKING_MODE = 1000000;
+// Cap the thinking at the maximum allowed value (1-32768).
+export const DEFAULT_THINKING_MODE = 32768;
 
 /**
  * Resolves the requested model alias (e.g., 'auto-gemini-3', 'pro', 'flash', 'flash-lite')
